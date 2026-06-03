@@ -1,0 +1,250 @@
+.page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+    width: 100%;
+}
+
+.back {
+    display: inline-block;
+    font-size: 0.82rem;
+    color: var(--text-soft, #888);
+    text-decoration: none;
+    margin-bottom: 24px;
+}
+
+.back:hover {
+    color: var(--text);
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 32px;
+}
+
+.section {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 28px;
+    background: #fff;
+}
+
+.section_title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-soft, #888);
+    margin: 0 0 18px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form_subtitle {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 8px 0 0;
+}
+
+.label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.optional {
+    font-weight: 400;
+    color: var(--text-soft, #aaa);
+    font-size: 0.78rem;
+}
+
+.input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.88rem;
+    font-family: inherit;
+    color: var(--text);
+    background: #fff;
+    transition: border-color 0.14s;
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--accent, #111);
+}
+
+.input:disabled {
+    background: #f5f5f4;
+    color: var(--text-soft, #888);
+    cursor: not-allowed;
+}
+
+.row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.grow {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.fixed {
+    flex: 0 0 120px;
+    min-width: 0;
+}
+
+.msg {
+    font-size: 0.85rem;
+    margin: 0;
+    color: var(--text);
+}
+
+.btn {
+    align-self: flex-start;
+    padding: 12px 20px;
+    background: var(--text-h, #111);
+    color: var(--bg, #fff);
+    border: none;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.14s;
+}
+
+.btn:hover:not(:disabled) {
+    opacity: 0.85;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn_ghost {
+    align-self: flex-start;
+    padding: 12px 20px;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.form_actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.empty {
+    font-size: 0.88rem;
+    color: var(--text-soft, #888);
+    margin: 0 0 20px;
+}
+
+.addr_list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.addr_item {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    align-items: flex-start;
+}
+
+.addr_info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #1872fa;
+    background: #1872fa20;
+    border-radius: 30px;
+    padding: 2px 8px;
+    align-self: flex-start;
+}
+
+.addr_label {
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.addr_text {
+    font-size: 0.85rem;
+    color: var(--text);
+    margin: 0;
+}
+
+.addr_actions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-end;
+    flex-shrink: 0;
+}
+
+.link_btn {
+    background: none;
+    border: none;
+    color: var(--text-soft, #888);
+    font-size: 0.78rem;
+    cursor: pointer;
+    padding: 2px 4px;
+}
+
+.link_btn:hover {
+    color: var(--text);
+    text-decoration: underline;
+}
+
+@media (max-width: 700px) {
+    .page {
+        padding: 24px 16px 64px;
+    }
+
+    .input {
+        font-size: 1rem;
+    }
+
+    .addr_item {
+        flex-direction: column;
+    }
+
+    .addr_actions {
+        flex-direction: row;
+        align-items: center;
+    }
+}

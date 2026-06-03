@@ -1,0 +1,82 @@
+.wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+    max-width: 480px;
+    display: flex;
+}
+
+.wrapper button {
+    position: absolute;
+    height: calc(100% - 6px);
+    top: 3px;
+    right: 3px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface);
+    border: none;
+    padding: 0 10px 0 15px;
+    font-family: var(--sans);
+    cursor: pointer;
+    font-size: 0.76rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.wrapper button i {
+    transform: translateY(2px);
+}
+
+.wrapper button:hover {
+    background: var(--border);
+}
+
+.wrapper button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.icon {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 15px;
+    color: var(--text);
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.input {
+    width: 100%;
+    padding: 10px 16px 10px 38px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--text-h);
+    font-size: 0.875rem;
+    font-family: inherit;
+    font-weight: 400;
+    box-sizing: border-box;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+}
+
+.input:focus {
+    border-color: var(--accent);
+}
+
+.input::placeholder {
+    color: var(--text);
+    opacity: 0.5;
+}
+
+@media (max-width: 1085px) {
+
+    .wrapper {
+        max-width: 100%;
+    }
+
+}

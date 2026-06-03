@@ -1,0 +1,364 @@
+.page {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+    width: 100%;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 32px;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 48px;
+    align-items: start;
+}
+
+.list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.item {
+    display: grid;
+    grid-template-columns: 64px 1fr auto auto auto;
+    gap: 16px;
+    align-items: center;
+    padding: 16px;
+    background: #fff;
+}
+
+.item+.item {
+    border-top: 1px solid var(--border);
+}
+
+.item_img {
+    width: 64px;
+    height: 64px;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.item_img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.img_placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--border);
+}
+
+.item_info {
+    min-width: 0;
+}
+
+.item_name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0 0 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.item_name:hover {
+    text-decoration: underline;
+}
+
+.item_sku {
+    font-size: 0.75rem;
+    color: var(--text-soft, #888);
+    margin: 0 0 2px;
+}
+
+.item_unit {
+    font-size: 0.78rem;
+    color: var(--text-soft, #888);
+    margin: 0;
+}
+
+.item_price_original {
+    text-decoration: line-through;
+    color: var(--text-soft, #aaa);
+    font-size: 0.72rem;
+    margin-right: 4px;
+}
+
+.item_promo_note {
+    color: var(--text-soft, #888);
+    font-size: 0.72rem;
+    margin-left: 2px;
+}
+
+.item_qty {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.qty_btn {
+    width: 28px;
+    height: 28px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+    transition: background 0.12s;
+}
+
+.qty_btn:hover {
+    background: var(--border);
+}
+
+.qty_val {
+    min-width: 24px;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.item_subtotal {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin: 0;
+    flex-shrink: 0;
+    min-width: 80px;
+    text-align: right;
+}
+
+.remove_btn {
+    background: none;
+    border: none;
+    font-size: .8rem;
+    color: var(--text-soft, #888);
+    cursor: pointer;
+    transition: color 0.12s, background 0.12s;
+}
+
+.remove_btn:hover {
+    text-decoration: underline;
+    color: var(--danger);
+}
+
+/* Sync banner */
+
+.sync_loading {
+    font-size: 0.82rem;
+    color: var(--text-soft, #888);
+    margin: 0 0 12px;
+}
+
+.sync_banner {
+    background: rgba(161, 98, 7, 0.10);
+    border: 1px solid rgba(161, 98, 7, 0.30);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+}
+
+.sync_banner_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sync_banner_title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #A16207;
+}
+
+.sync_dismiss {
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    color: var(--text-soft, #888);
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+}
+
+.sync_list {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.84rem;
+    color: var(--text);
+}
+
+/* Summary */
+
+.summary {
+    position: sticky;
+    top: 110px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.summary_row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 1rem;
+}
+
+.summary_row strong {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.checkout_btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--text-h, #111);
+    color: var(--bg, #fff);
+    border: none;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: opacity 0.14s;
+}
+
+.checkout_btn:hover {
+    opacity: 0.85;
+}
+
+.continue_link {
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--text-soft, #888);
+    text-decoration: none;
+}
+
+.continue_link:hover {
+    color: var(--text);
+}
+
+/* Empty state */
+
+.empty {
+    max-width: 400px;
+    margin: 120px auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.empty_title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-soft, #888);
+}
+
+.empty_link {
+    padding: 10px 20px;
+    background: var(--text-h, #111);
+    color: var(--bg, #fff);
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.14s;
+}
+
+.empty_link:hover {
+    opacity: 0.8;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .summary {
+        position: static;
+    }
+}
+
+@media (max-width: 700px) {
+    .page {
+        padding: 24px 16px 64px;
+    }
+
+    .item {
+        grid-template-columns: 56px 1fr auto;
+        grid-template-rows: auto auto;
+        grid-template-areas:
+            "img info del"
+            "img qty  subtotal";
+        gap: 3px 12px;
+    }
+
+    .item_img {
+        grid-area: img;
+        width: 56px;
+        height: 56px;
+        align-self: center;
+    }
+
+    .item_info {
+        grid-area: info;
+        align-self: end;
+    }
+
+    .item_qty {
+        grid-area: qty;
+        align-self: start;
+    }
+
+    .item_subtotal {
+        grid-area: subtotal;
+        text-align: right;
+        min-width: unset;
+        align-self: center;
+    }
+
+    .remove_btn {
+        grid-area: del;
+        width: 40px;
+        height: 40px;
+        align-self: center;
+        justify-self: end;
+    }
+
+    .qty_btn {
+        width: 40px;
+        height: 40px;
+    }
+}

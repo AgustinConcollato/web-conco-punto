@@ -1,0 +1,127 @@
+:root {
+  --sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --mono: 'DM Mono', ui-monospace, monospace;
+
+  /* Core palette */
+  --bg: #F6F4EF;
+  --bg-card: #FFFFFF;
+  --bg-surface: #EDEBE3;
+  --text: #69645e;
+  --text-h: #100F0E;
+  --border: #DED9CF;
+  --border-strong: #C5BEB2;
+  --code-bg: #EDEBE3;
+  --social-bg: rgba(237, 235, 227, 0.5);
+
+  /* Accent */
+  --accent: #D14D45;
+  --accent-bg: #d14c4511;
+  --accent-border: #d14c45;
+
+  /* success */
+  --success: #66b819;
+  --success-bg: #66b8191f;
+  --success-border: #66b819;
+
+  /* danger */
+  --danger: #DC2626;
+  --danger-bg: #FEE2E2;
+
+  /* Price — warm amber */
+  --price: #100F0E;
+
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.07), 0 4px 16px rgba(0, 0, 0, 0.04);
+  --shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.06);
+
+  /* Text variants */
+  --text-soft: #888;
+  --text-muted: #9ca3af;
+
+  /* Muted background */
+  --bg-muted: #f3f4f6;
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 20px;
+
+  font: 15px/160% var(--sans);
+  letter-spacing: 0.01em;
+  color-scheme: light;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+}
+
+#root {
+  width: 100%;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1,
+h2 {
+  font-family: var(--sans);
+  font-weight: 500;
+  color: var(--text-h);
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 2rem;
+  letter-spacing: -0.3px;
+  margin: 0 0 8px;
+}
+
+h2 {
+  font-size: 1.35rem;
+  letter-spacing: -0.2px;
+  margin: 0 0 8px;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 13px;
+  padding: 2px 7px;
+  background: var(--code-bg);
+  border-radius: var(--radius-sm);
+  color: var(--text-h);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
