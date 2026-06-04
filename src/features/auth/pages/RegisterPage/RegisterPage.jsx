@@ -48,7 +48,7 @@ export function RegisterPage() {
 
                 <form className={styles.form} onSubmit={handleSubmit}>
                     <label className={styles.label}>
-                        Nombre / Razón social
+                        Nombre y Apellido / Razón social
                         <input
                             className={styles.input}
                             type="text"
