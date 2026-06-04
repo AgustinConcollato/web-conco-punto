@@ -1,0 +1,92 @@
+.wrap {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 39px;
+    height: 39px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.14s, border-color 0.14s, color 0.14s;
+    background: var(--bg-surface);
+}
+
+.btn:hover {
+    background: var(--text-h);
+    color: var(--bg);
+    border-color: var(--text-h);
+}
+
+.btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.btn i {
+    font-size: 16px;
+}
+
+.menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 180px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-hover, 0 8px 24px rgba(0, 0, 0, 0.12));
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    z-index: 200;
+}
+
+.menu_header {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text);
+    padding: 8px 10px;
+    margin: 0;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.menu_item {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    padding: 9px 10px;
+    border: none;
+    background: none;
+    font-family: inherit;
+    font-size: 0.85rem;
+    color: var(--text);
+    text-decoration: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+}
+
+.menu_item:hover {
+    background: var(--bg-surface);
+}
+
+.menu_logout {
+    color: var(--danger, #b91c1c);
+}
+
+.menu_logout:hover {
+    background: var(--danger, #b91c1c);
+    color: #fff;
+}

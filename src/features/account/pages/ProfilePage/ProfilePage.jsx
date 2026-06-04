@@ -44,6 +44,11 @@ export function ProfilePage() {
         setData(prev => ({ ...prev, [name]: value }));
     };
 
+    const remove = (id) => {
+        setEditingId(null);
+        removeAddress(id);
+    }
+
     const submitData = async (e) => {
         e.preventDefault();
         setSavingData(true);
@@ -159,7 +164,7 @@ export function ProfilePage() {
                                         </button>
                                     )}
                                     <button className={styles.link_btn} onClick={() => startEdit(a)}>Editar</button>
-                                    <button className={styles.link_btn} onClick={() => removeAddress(a.id)}>Eliminar</button>
+                                    <button className={styles.link_btn} onClick={() => remove(a.id)}>Eliminar</button>
                                 </div>
                             </li>
                         ))}

@@ -32,7 +32,7 @@ function addressToShipping(a) {
 }
 
 export function CheckoutPage() {
-    const { items, cartTotal, clearCart } = useCartContext();
+    const { items, cartTotal, clearCart, syncCartStocks } = useCartContext();
     const { client, registerFromOrder, addAddress } = useClientAuth();
     const navigate = useNavigate();
 
@@ -61,8 +61,11 @@ export function CheckoutPage() {
         () => (savedAddresses.find(a => a.is_default) ?? savedAddresses[0])?.id ?? null
     );
     const [saveAddress, setSaveAddress] = useState(true);
+    const [deliveryMethod, setDeliveryMethod] = useState('shipping');
     const [submitting, setSubmitting] = useState(false);
     const [apiErrors, setApiErrors] = useState(null);
+    const [stockChanges, setStockChanges] = useState([]);
+    const [generalError, setGeneralError] = useState(null);
     const submittedRef = useRef(false);
 
     useEffect(() => {
@@ -71,12 +74,14 @@ export function CheckoutPage() {
 
     const handleChange = (e) => {
         setApiErrors(null);
+        setGeneralError(null);
         const { name, value } = e.target;
         setForm(prev => ({ ...prev, [name]: value }));
     };
 
     const handleAddressChange = (e) => {
         setApiErrors(null);
+        setGeneralError(null);
         const { name, value } = e.target;
         setForm(prev => ({ ...prev, shipping_address: { ...prev.shipping_address, [name]: value } }));
     };
@@ -84,18 +89,24 @@ export function CheckoutPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setApiErrors(null);
+        setGeneralError(null);
+        setStockChanges([]);
         setSubmitting(true);
 
-        const useSaved = hasSavedAddresses;
+        const isWhatsapp = deliveryMethod === 'whatsapp';
+        const useSaved = hasSavedAddresses && !isWhatsapp;
         const selected = useSaved
             ? (savedAddresses.find(a => a.id === selectedAddressId) ?? savedAddresses[0])
             : null;
-        const shipping = selected ? addressToShipping(selected) : form.shipping_address;
+        const shipping = isWhatsapp
+            ? null
+            : (selected ? addressToShipping(selected) : form.shipping_address);
 
         const payload = {
             name: isLogged ? client.name : form.name.trim(),
             email: isLogged ? client.email : form.email.trim(),
             phone: isLogged ? client.phone : (form.phone.trim() || null),
+            delivery_method: deliveryMethod,
             shipping_address: shipping,
             notes: form.notes.trim() || null,
             items: items.map(i => ({
@@ -121,7 +132,7 @@ export function CheckoutPage() {
             clearCart();
 
             // Cliente logueado sin direcciones guardadas: guardar la usada en su perfil
-            if (isLogged && !hasSavedAddresses && saveAddress) {
+            if (isLogged && !hasSavedAddresses && saveAddress && !isWhatsapp && shipping) {
                 try { await addAddress(shipping); } catch { /* no bloquear confirmación */ }
             }
 
@@ -137,7 +148,22 @@ export function CheckoutPage() {
 
             navigate(`/pedido-confirmado?order=${order_id}`, { replace: true, state: { registrationResult } });
         } catch (err) {
-            setApiErrors(err?.errors ?? {});
+            if (Array.isArray(err?.stock_errors)) {
+                const stockMap = new Map(
+                    err.stock_errors.map(se => [`${se.product_id}:${se.variant_id ?? null}`, se.available])
+                );
+                const changes = syncCartStocks(stockMap);
+                if (items.length - changes.filter(c => c.type === 'removed').length <= 0) {
+                    navigate('/carrito', { replace: true });
+                } else {
+                    setStockChanges(changes);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            } else if (err?.errors) {
+                setApiErrors(err.errors);
+            } else {
+                setGeneralError(err?.message ?? 'No pudimos procesar el pedido. Intentá de nuevo.');
+            }
         } finally {
             setSubmitting(false);
         }
@@ -149,6 +175,28 @@ export function CheckoutPage() {
         <div className={styles.page}>
             <Link to="/carrito" className={styles.back}>← Volver al carrito</Link>
             <h1 className={styles.title}>Finalizar pedido</h1>
+
+            {stockChanges.length > 0 && (
+                <div className={styles.sync_banner}>
+                    <div className={styles.sync_banner_header}>
+                        <span className={styles.sync_banner_title}>Actualizamos tu carrito</span>
+                        <button type="button" className={styles.sync_dismiss} onClick={() => setStockChanges([])} aria-label="Cerrar">×</button>
+                    </div>
+                    <ul className={styles.sync_list}>
+                        {stockChanges.map((c, i) => (
+                            <li key={i}>
+                                {c.type === 'removed'
+                                    ? <><strong>"{c.name}{c.sku ? ` · ${c.sku}` : ''}"</strong> ya no tiene stock y fue eliminado.</>
+                                    : <><strong>"{c.name}{c.sku ? ` · ${c.sku}` : ''}"</strong> se redujo de {c.from} a {c.to} unidades.</>
+                                }
+                            </li>
+                        ))}
+                    </ul>
+                    <p className={styles.sync_hint}>Revisá el resumen y volvé a confirmar el pedido.</p>
+                </div>
+            )}
+
+            {generalError && <p className={styles.general_error}>{generalError}</p>}
 
             <div className={styles.layout}>
                 <form className={styles.form} onSubmit={handleSubmit} noValidate>
@@ -215,10 +263,35 @@ export function CheckoutPage() {
                     </div>
 
                     <div className={styles.fieldset}>
-                        <span className={styles.legend}>Dirección de envío</span>
+                        <span className={styles.legend}>Entrega</span>
 
-                        {hasSavedAddresses ? (
+                        <div className={styles.method_choices}>
+                            <label className={styles.method_choice}>
+                                <input
+                                    type="radio"
+                                    name="delivery_method"
+                                    checked={deliveryMethod === 'shipping'}
+                                    onChange={() => setDeliveryMethod('shipping')}
+                                />
+                                <span>Envío a domicilio</span>
+                            </label>
+                            <label className={styles.method_choice}>
+                                <input
+                                    type="radio"
+                                    name="delivery_method"
+                                    checked={deliveryMethod === 'whatsapp'}
+                                    onChange={() => setDeliveryMethod('whatsapp')}
+                                />
+                                <span>Coordinar por WhatsApp</span>
+                            </label>
+                        </div>
+
+                        {deliveryMethod === 'whatsapp' ? (
+                            <p className={styles.wa_hint}>Nos comunicamos por WhatsApp para coordinar el envío o el retiro del pedido.</p>
+                        ) : hasSavedAddresses ? (
                             <>
+                                <span className={styles.legend}>dirección</span>
+
                                 <ul className={styles.addr_choices}>
                                     {savedAddresses.map(a => (
                                         <li key={a.id}>
@@ -242,6 +315,8 @@ export function CheckoutPage() {
                             </>
                         ) : (
                             <>
+                                <span className={styles.legend}>dirección</span>
+
                                 <div className={styles.form_row}>
                                     <div className={styles.form_col_grow}>
                                         <label className={styles.label}>
@@ -259,7 +334,13 @@ export function CheckoutPage() {
                                     </div>
                                     <div className={styles.form_col_fixed}>
                                         <label className={styles.label}>
-                                            Número
+                                            <span className={styles.label_row}>
+                                                Número
+                                                <span className={styles.tooltip}>
+                                                    <i className="hgi hgi-stroke hgi-rounded hgi-alert-circle"></i>
+                                                    <span className={styles.tooltip_text}>Si la dirección no tiene número, ingresá 0.</span>
+                                                </span>
+                                            </span>
                                             <input
                                                 className={styles.input}
                                                 name="street_number"
@@ -336,8 +417,13 @@ export function CheckoutPage() {
                             </>
                         )}
 
+                    </div>
+
+                    <div className={styles.fieldset}>
+                        <span className={styles.legend}>Nota / Aclaración para el pedido</span>
+
                         <label className={styles.label}>
-                            Notas <span className={styles.optional}>(opcional)</span>
+                            <span className={styles.optional}>(opcional)</span>
                             <textarea
                                 className={`${styles.input} ${styles.textarea}`}
                                 name="notes"
@@ -351,9 +437,11 @@ export function CheckoutPage() {
                     </div>
 
                     {!isLogged && (
-                        <div>
+                        <div className={styles.fieldset}>
+                            <span className={styles.legend}>Contraseña</span>
+
                             <label className={styles.label}>
-                                Contraseña <span className={styles.optional}>(opcional — para crear tu cuenta)</span>
+                                Se crea una cuenta al completar este campo (opcional)
                                 <input
                                     className={styles.input}
                                     type="password"

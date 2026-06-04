@@ -323,7 +323,7 @@ export function ProductPage() {
                             </div>
                         </div>
 
-                        {priceListId === 2 && <button className={styles.cta_btn}>Comprar ahora</button>}
+                        {/* {priceListId === 2 && <button className={styles.cta_btn}>Comprar ahora</button>} */}
                         <button
                             className={styles.asc_btn}
                             disabled={displayStock <= 0 || available <= 0}

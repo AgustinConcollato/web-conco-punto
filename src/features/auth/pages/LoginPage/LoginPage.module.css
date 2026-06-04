@@ -67,6 +67,10 @@
     border-radius: var(--radius-sm);
 }
 
+.error a {
+    text-decoration: underline;
+}
+
 .btn {
     margin-top: 4px;
     padding: 11px;

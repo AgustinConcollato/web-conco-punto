@@ -91,36 +91,6 @@
     gap: 10px;
 }
 
-.session {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-shrink: 0;
-}
-
-.session_name {
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: var(--text);
-    white-space: nowrap;
-}
-
-.session_logout {
-    font-size: 0.78rem;
-    color: var(--text-soft);
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-family: inherit;
-    padding: 0;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-}
-
-.session_logout:hover {
-    color: var(--danger);
-}
-
 .session_login {
     font-size: 0.82rem;
     color: var(--text-soft);

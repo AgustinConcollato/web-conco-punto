@@ -6,13 +6,14 @@ import { useClientAuth } from '../../context/ClientAuthContext';
 import { CartButton } from '../../features/cart/components/CartButton/CartButton';
 import { CartNotification } from '../../features/cart/components/CartNotification/CartNotification';
 import { SearchBar } from '../../features/catalog/components/SearchBar/SearchBar';
+import { UserMenu } from '../../features/account/components/UserMenu/UserMenu';
 import { CategoryDrawer } from '../CategoryDrawer/CategoryDrawer';
 import styles from './SiteHeader.module.css';
 
 export function SiteHeader() {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const { lastAdded, clearLastAdded } = useCartContext();
-    const { client, logout } = useClientAuth();
+    const { client } = useClientAuth();
 
     return (
         <header className={styles.header}>
@@ -30,10 +31,7 @@ export function SiteHeader() {
                 </div>
                 <div className={styles.container}>
                     {client ? (
-                        <div className={styles.session}>
-                            <Link to="/perfil" className={styles.session_name}>{client.name.split(' ')[0]}</Link>
-                            <button className={styles.session_logout} onClick={logout}>Salir</button>
-                        </div>
+                        <UserMenu />
                     ) : (
                         <Link to="/iniciar-sesion" className={styles.session_login}>Iniciar sesión</Link>
                     )}

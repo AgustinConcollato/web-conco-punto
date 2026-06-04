@@ -63,7 +63,9 @@ export function LoginPage() {
                         />
                     </label>
 
-                    {error && <p className={styles.error}>{error}</p>}
+                    {error && (
+                        <p className={styles.error} dangerouslySetInnerHTML={{ __html: error }} />
+                    )}
 
                     <button className={styles.btn} type="submit" disabled={loading}>
                         {loading ? 'Ingresando…' : 'Ingresar'}
