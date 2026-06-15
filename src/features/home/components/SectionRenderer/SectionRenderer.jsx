@@ -41,8 +41,7 @@ export function SectionRenderer({ sections, data }) {
 
                 return (
                     <div key={id}>
-                        {settings?.title && <h2 className={styles.promo_title}>{settings.title}</h2>}
-                        <PromotionsSection promotions={promotions} />
+                        <PromotionsSection promotions={promotions} title={settings?.title}/>
                     </div>
                 );
             }

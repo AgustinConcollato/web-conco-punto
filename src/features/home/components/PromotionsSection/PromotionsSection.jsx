@@ -12,7 +12,7 @@ function ClockIcon() {
     );
 }
 
-export function PromotionsSection({ promotions }) {
+export function PromotionsSection({ promotions, title }) {
     if (!promotions?.length) return null;
 
     return (
@@ -22,7 +22,7 @@ export function PromotionsSection({ promotions }) {
                 return (
                 <div key={promo.id} className={styles.promo_block}>
                     <div className={styles.promo_header}>
-                        <h2 className={styles.promo_title}>{promo.name}</h2>
+                        <h2 className={styles.promo_title}>{title || promo.name}</h2>
                         {promo.description && (
                             <p className={styles.promo_desc}>{promo.description}</p>
                         )}
