@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { SectionRenderer } from '../../components/SectionRenderer/SectionRenderer';
 import { HomeSkeleton } from '../../components/HomeSkeleton/HomeSkeleton';
 import { useHomeSectionsData } from '../../hooks/useHomeSectionsData';
+import { Seo } from '../../../../components/Seo/Seo';
 import styles from './HomePreviewPage.module.css';
 
 const PANEL_ORIGIN = import.meta.env.VITE_PANEL_ORIGIN;
@@ -28,6 +29,7 @@ export function HomePreviewPage() {
     if (!config) {
         return (
             <div className={styles.waiting}>
+                <Seo title="Vista previa" noindex />
                 <p>Esperando configuración…</p>
             </div>
         );
@@ -36,6 +38,7 @@ export function HomePreviewPage() {
     if (!data.ready) {
         return (
             <div className={styles.page}>
+                <Seo title="Vista previa" noindex />
                 <HomeSkeleton sections={config.sections} />
             </div>
         );
@@ -43,6 +46,7 @@ export function HomePreviewPage() {
 
     return (
         <div className={styles.page}>
+            <Seo title="Vista previa" noindex />
             <SectionRenderer sections={config.sections} data={data} />
         </div>
     );

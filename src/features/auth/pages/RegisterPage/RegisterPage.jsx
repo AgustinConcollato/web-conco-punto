@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useClientAuth } from '../../../../context/ClientAuthContext';
+import { Seo } from '../../../../components/Seo/Seo';
 import styles from './RegisterPage.module.css';
 
 export function RegisterPage() {
@@ -42,6 +43,7 @@ export function RegisterPage() {
 
     return (
         <div className={styles.page}>
+            <Seo title="Crear cuenta" noindex />
             <div className={styles.card}>
                 <h1 className={styles.title}>Crear cuenta</h1>
                 <p className={styles.subtitle}>Accedé más rápido en tu próxima compra</p>

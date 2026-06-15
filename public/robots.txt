@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /carrito
+Disallow: /checkout
+Disallow: /pedido-confirmado
+Disallow: /perfil
+Disallow: /iniciar-sesion
+Disallow: /registro
+Disallow: /vista-previa-home
+
+Sitemap: https://mayorista.concoypunto.com/sitemap.xml

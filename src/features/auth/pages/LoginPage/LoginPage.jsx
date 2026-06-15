@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useClientAuth } from '../../../../context/ClientAuthContext';
+import { Seo } from '../../../../components/Seo/Seo';
 import styles from './LoginPage.module.css';
 
 export function LoginPage() {
@@ -33,6 +34,7 @@ export function LoginPage() {
 
     return (
         <div className={styles.page}>
+            <Seo title="Iniciar sesión" noindex />
             <div className={styles.card}>
                 <h1 className={styles.title}>Iniciar sesión</h1>
                 <p className={styles.subtitle}>Accedé a tu cuenta mayorista</p>

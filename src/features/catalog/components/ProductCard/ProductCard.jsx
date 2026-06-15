@@ -5,6 +5,7 @@ import { getPrice, usePriceContext } from '../../../../context/PriceContext';
 import { useCartContext } from '../../../../context/CartContext';
 import { formatPrice } from '../../../../utils/formatPrice';
 import { getActivePromo, calcPromoPrice, promoLabel, promoEndLabel } from '../../../../utils/promo';
+import { productHref } from '../../../../utils/slug';
 import styles from './ProductCard.module.css';
 
 export function ProductCard({ product, variant }) {
@@ -23,7 +24,7 @@ export function ProductCard({ product, variant }) {
 
     const stock = variant != null ? variant.stock : product.stock;
     const sku = variant ? (variant.sku ?? product.sku) : product.sku;
-    const to = variant ? `/productos/${product.id}/variante/${variant.id}` : `/productos/${product.id}`;
+    const to = productHref(product, variant);
     const variantLabel = variant
         ? (variant.attribute_values ?? []).map(av => av.value).join(' · ')
         : null;

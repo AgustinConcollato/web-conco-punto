@@ -3,6 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { getProducts } from '../../services/catalogService';
 import { usePriceContext } from '../../../../context/PriceContext';
 import { ProductCard } from '../../components/ProductCard/ProductCard';
+import { absoluteUrl } from '../../../../config/api';
+import { Seo } from '../../../../components/Seo/Seo';
 import styles from '../CatalogPage/CatalogPage.module.css';
 
 export function StockEntriesPage() {
@@ -16,10 +18,6 @@ export function StockEntriesPage() {
     const [loading, setLoading] = useState(true);
     const [fetchError, setFetchError] = useState(false);
     const [retryKey, setRetryKey] = useState(0);
-
-    useEffect(() => {
-        document.title = 'Ingresos - Conco y Punto';
-    }, []);
 
     useEffect(() => {
         setLoading(true);
@@ -41,8 +39,13 @@ export function StockEntriesPage() {
 
     return (
         <div className={styles.page}>
+            <Seo
+                title="Ingresos"
+                description="Últimos ingresos de productos en Conco y Punto."
+                canonical={absoluteUrl('/ingresos')}
+            />
             <div className={styles.category_header}>
-                <h2 className={styles.category_title}>Ingresos</h2>
+                <h1 className={styles.category_title}>Ingresos</h1>
             </div>
 
             {loading ? (

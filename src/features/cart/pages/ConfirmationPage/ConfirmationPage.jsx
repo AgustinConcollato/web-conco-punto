@@ -1,4 +1,5 @@
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { Seo } from '../../../../components/Seo/Seo';
 import styles from './ConfirmationPage.module.css';
 
 export function ConfirmationPage() {
@@ -9,6 +10,7 @@ export function ConfirmationPage() {
 
     return (
         <div className={styles.page}>
+            <Seo title="Pedido recibido" noindex />
             <div className={styles.card}>
                 <div className={styles.check} aria-hidden="true">✓</div>
                 <h1 className={styles.title}>¡Pedido recibido!</h1>

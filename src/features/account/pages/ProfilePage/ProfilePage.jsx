@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useClientAuth } from '../../../../context/ClientAuthContext';
 import { PROVINCES } from '../../../../utils/provinces';
+import { Seo } from '../../../../components/Seo/Seo';
 import styles from './ProfilePage.module.css';
 
 const EMPTY_ADDRESS = {
@@ -24,10 +25,6 @@ export function ProfilePage() {
     const [editingId, setEditingId] = useState(null);
     const [savingAddr, setSavingAddr] = useState(false);
     const [addrError, setAddrError] = useState(null);
-
-    useEffect(() => {
-        document.title = 'Mi perfil';
-    }, []);
 
     useEffect(() => {
         if (client) setData({ name: client.name ?? '', phone: client.phone ?? '' });
@@ -116,6 +113,7 @@ export function ProfilePage() {
 
     return (
         <div className={styles.page}>
+            <Seo title="Mi perfil" noindex />
             <Link to="/" className={styles.back}>← Volver</Link>
             <h1 className={styles.title}>Mi perfil</h1>
 

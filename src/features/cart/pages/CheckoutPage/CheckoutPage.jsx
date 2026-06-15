@@ -6,6 +6,7 @@ import { formatPrice } from '../../../../utils/formatPrice';
 import { PROVINCES } from '../../../../utils/provinces';
 import { postWholesaleOrder } from '../../services/checkoutService';
 import { calcEffectivePrice } from '../../../../utils/promo';
+import { Seo } from '../../../../components/Seo/Seo';
 import styles from './CheckoutPage.module.css';
 
 const PREFILL_KEY = 'mayorista_checkout_info';
@@ -173,6 +174,7 @@ export function CheckoutPage() {
 
     return (
         <div className={styles.page}>
+            <Seo title="Finalizar pedido" noindex />
             <Link to="/carrito" className={styles.back}>← Volver al carrito</Link>
             <h1 className={styles.title}>Finalizar pedido</h1>
 

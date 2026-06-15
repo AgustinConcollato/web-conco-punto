@@ -4,6 +4,9 @@ import { getCategories, getProducts } from '../../services/catalogService';
 import { usePriceContext } from '../../../../context/PriceContext';
 import { ProductCard } from '../../components/ProductCard/ProductCard';
 import { slugify } from '../../../../utils/slugify';
+import { absoluteUrl } from '../../../../config/api';
+import { Seo } from '../../../../components/Seo/Seo';
+import { JsonLd } from '../../../../components/Seo/JsonLd';
 import styles from './CatalogPage.module.css';
 
 export function CatalogPage() {
@@ -26,10 +29,6 @@ export function CatalogPage() {
         getCategories().then(setTopCategories).catch(() => { });
     }, []);
 
-    useEffect(() => {
-        document.title = (childCategory?.name ?? parentCategory?.name) ?? 'Conco y Punto'
-    }, [window.location.pathname, topCategories]);
-
     const parentCategory = topCategories.find(c => (c.slug ?? slugify(c.name)) === slug) ?? null;
     const childCategory = childSlug && parentCategory
         ? (parentCategory.children ?? []).find(c => (c.slug ?? slugify(c.name)) === childSlug) ?? null
@@ -38,6 +37,32 @@ export function CatalogPage() {
     const activeCategory = childCategory ?? parentCategory;
     const categoryId = activeCategory?.id ?? null;
     const chipCategories = parentCategory?.children ?? [];
+
+    // --- SEO ---
+    const isCategoryPage = Boolean(slug && activeCategory);
+    const seoNoindex = !isCategoryPage || Boolean(q);  // /buscar y búsquedas con query no se indexan
+    const categoryPath = childCategory
+        ? `/categoria/${slug}/${childSlug}`
+        : `/categoria/${slug}`;
+    const seoCanonical = isCategoryPage ? absoluteUrl(categoryPath) : absoluteUrl('/buscar');
+    const seoTitle = isCategoryPage ? activeCategory.name : 'Buscar productos';
+    const seoDescription = isCategoryPage
+        ? `Comprá ${activeCategory.name} en Conco y Punto. Catálogo con precios y stock actualizados.`
+        : 'Buscá en el catálogo de Conco y Punto.';
+
+    const breadcrumbLd = isCategoryPage ? {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Inicio', item: absoluteUrl('/') },
+            ...(childCategory
+                ? [
+                    { '@type': 'ListItem', position: 2, name: parentCategory.name, item: absoluteUrl(`/categoria/${slug}`) },
+                    { '@type': 'ListItem', position: 3, name: childCategory.name, item: absoluteUrl(categoryPath) },
+                ]
+                : [{ '@type': 'ListItem', position: 2, name: activeCategory.name, item: absoluteUrl(categoryPath) }]),
+        ],
+    } : null;
 
     useEffect(() => {
         const sortParams = sort === 'price_asc'
@@ -87,6 +112,13 @@ export function CatalogPage() {
 
     return (
         <div className={styles.page}>
+            <Seo
+                title={seoTitle}
+                description={seoDescription}
+                canonical={seoCanonical}
+                noindex={seoNoindex}
+            />
+            {breadcrumbLd && <JsonLd data={breadcrumbLd} />}
             {slug && activeCategory ? (
                 <div className={styles.category_header}>
                     <nav className={styles.breadcrumb}>
@@ -102,7 +134,7 @@ export function CatalogPage() {
                             </>
                         )}
                     </nav>
-                    <h2 className={styles.category_title}>{activeCategory.name}</h2>
+                    <h1 className={styles.category_title}>{activeCategory.name}</h1>
                 </div>
             ) : null}
 

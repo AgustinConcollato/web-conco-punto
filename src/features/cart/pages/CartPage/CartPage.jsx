@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { IMAGE_URL } from '../../../../config/api';
 import { useCartContext } from '../../../../context/CartContext';
 import { formatPrice } from '../../../../utils/formatPrice';
 import { calcEffectivePrice } from '../../../../utils/promo';
+import { productHref } from '../../../../utils/slug';
+import { Seo } from '../../../../components/Seo/Seo';
 import { useCartSync } from '../../hooks/useCartSync';
 import styles from './CartPage.module.css';
 
@@ -13,13 +15,10 @@ export function CartPage() {
     const { syncing, changes } = useCartSync({ items, syncCartStocks });
     const [dismissed, setDismissed] = useState(false);
 
-    useEffect(()=> {
-        document.title = 'Carrito de compras'
-    },[]);
-
     if (items.length === 0) {
         return (
             <div className={styles.empty}>
+                <Seo title="Carrito" noindex />
                 <p className={styles.empty_title}>Tu carrito está vacío</p>
                 <Link to="/" className={styles.empty_link}>Ver productos</Link>
             </div>
@@ -28,6 +27,7 @@ export function CartPage() {
 
     return (
         <div className={styles.page}>
+            <Seo title="Carrito" noindex />
             <h1 className={styles.title}>Carrito</h1>
 
             {syncing && (
@@ -67,10 +67,11 @@ export function CartPage() {
                                     }
                                 </div>
                                 <div className={styles.item_info}>
-                                    <Link to={item.variant_id ?
-                                        `/productos/${item.product_id}/variante/${item.variant_id}` :
-                                        `/productos/${item.product_id}`
-                                    }
+                                    <Link
+                                        to={productHref(
+                                            { id: item.product_id, name: item.name },
+                                            item.variant_id ? { id: item.variant_id } : undefined,
+                                        )}
                                         className={styles.item_name}
                                     >{item.name}</Link>
                                     {item.sku && <p className={styles.item_sku}>{item.sku}</p>}

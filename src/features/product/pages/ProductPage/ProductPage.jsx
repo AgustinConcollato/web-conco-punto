@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { IMAGE_URL } from '../../../../config/api';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { IMAGE_URL, absoluteUrl } from '../../../../config/api';
 import { getPrice, usePriceContext } from '../../../../context/PriceContext';
 import { useCartContext } from '../../../../context/CartContext';
 import { formatPrice } from '../../../../utils/formatPrice';
 import { getActivePromo, calcPromoPrice, promoLabel, promoEndLabel } from '../../../../utils/promo';
+import { productHref, parseProductId } from '../../../../utils/slug';
 import { getProduct } from '../../../catalog/services/catalogService';
+import { Seo } from '../../../../components/Seo/Seo';
+import { JsonLd } from '../../../../components/Seo/JsonLd';
 import { AttributeList } from '../../components/AttributeList/AttributeList';
 import { ImageGallery } from '../../components/ImageGallery/ImageGallery';
 import styles from './ProductPage.module.css';
@@ -43,7 +46,9 @@ function getAttrValue(attrValues, attrName) {
 }
 
 export function ProductPage() {
-    const { id, vid } = useParams();
+    const { slugId, vid } = useParams();
+    const id = parseProductId(slugId);
+    const location = useLocation();
     const navigate = useNavigate();
     const { priceListId } = usePriceContext();
     const { addItem, items: cartItems } = useCartContext();
@@ -72,19 +77,22 @@ export function ProductPage() {
                 if (data?.error) { setError('not_found'); return; }
 
                 setProduct(data);
-                document.title = data.name;
                 if (vid) {
                     const match = data.variants?.find(v => String(v.id) === String(vid));
                     setSelectedVariant(match ?? null);
                 } else {
                     setSelectedVariant(null);
                 }
+
+                // Redirect canónico: /productos/123 (viejo o slug incorrecto) -> /productos/nombre-123
+                const expected = productHref(data, vid ? { id: vid } : undefined);
+                if (location.pathname !== expected) {
+                    navigate(expected, { replace: true });
+                }
             })
             .catch(() => setError('network'))
             .finally(() => setLoading(false));
-
-        return () => { document.title = 'Conco y Punto'; };
-    }, [id, retryKey, priceListId]);
+    }, [id, vid, retryKey, priceListId]);
 
 
     useEffect(() => {
@@ -166,11 +174,56 @@ export function ProductPage() {
 
     const handleSelectVariant = (v) => {
         setSelectedVariant(v);
-        navigate(`/productos/${id}/variante/${v.id}`, { replace: true });
+        navigate(productHref(product, v), { replace: true });
     };
+
+    // --- SEO ---
+    const canonical = absoluteUrl(productHref(product));
+    const seoDescription = (product.description || '').replace(/\s+/g, ' ').trim().slice(0, 160)
+        || `${product.name} en Conco y Punto.`;
+    const seoImages = displayImages.map(im => `${IMAGE_URL}/${im.path}`).filter(Boolean);
+    const offerPrice = (promo && promoPrice !== null) ? promoPrice : price;
+
+    const productLd = {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: product.name,
+        ...(seoImages.length ? { image: seoImages } : {}),
+        description: seoDescription,
+        ...(displaySku ? { sku: displaySku } : {}),
+        brand: { '@type': 'Brand', name: 'Conco y Punto' },
+        ...(offerPrice !== null && offerPrice !== undefined ? {
+            offers: {
+                '@type': 'Offer',
+                price: offerPrice,
+                priceCurrency: 'ARS',
+                availability: displayStock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+                url: canonical,
+            },
+        } : {}),
+    };
+
+    const crumbCat = product.categories?.[0];
+    const breadcrumbItems = [{ '@type': 'ListItem', position: 1, name: 'Inicio', item: absoluteUrl('/') }];
+    if (crumbCat?.parent) {
+        breadcrumbItems.push({ '@type': 'ListItem', position: breadcrumbItems.length + 1, name: crumbCat.parent.name, item: absoluteUrl(`/categoria/${crumbCat.parent.slug}`) });
+        breadcrumbItems.push({ '@type': 'ListItem', position: breadcrumbItems.length + 1, name: crumbCat.name, item: absoluteUrl(`/categoria/${crumbCat.parent.slug}/${crumbCat.slug}`) });
+    } else if (crumbCat) {
+        breadcrumbItems.push({ '@type': 'ListItem', position: breadcrumbItems.length + 1, name: crumbCat.name, item: absoluteUrl(`/categoria/${crumbCat.slug}`) });
+    }
+    breadcrumbItems.push({ '@type': 'ListItem', position: breadcrumbItems.length + 1, name: product.name, item: canonical });
+    const breadcrumbLd = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: breadcrumbItems };
 
     return (
         <div className={styles.page}>
+            <Seo
+                title={product.name}
+                description={seoDescription}
+                canonical={canonical}
+                image={seoImages[0]}
+                type="product"
+            />
+            <JsonLd data={[productLd, breadcrumbLd]} />
             <button onClick={() => window.history.back() ?? navigate('/')} className={styles.back}>← Volver</button>
 
             <div className={styles.layout}>
@@ -202,7 +255,7 @@ export function ProductPage() {
                                         <div className={styles.swatch_wrap}>
                                             <button
                                                 className={`${styles.swatch} ${selectedVariant === null ? styles.swatch_active : ''}`}
-                                                onClick={() => { setSelectedVariant(null); navigate(`/productos/${id}`, { replace: true }); }}
+                                                onClick={() => { setSelectedVariant(null); navigate(productHref(product), { replace: true }); }}
                                                 disabled={product.stock <= 0}
                                             >
                                                 {thumb

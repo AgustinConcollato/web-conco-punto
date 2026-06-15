@@ -32,8 +32,8 @@ function App() {
                             <Route path="/categoria/:slug" element={<CatalogPage />} />
                             <Route path="/categoria/:slug/:childSlug" element={<CatalogPage />} />
                             <Route path="/ingresos" element={<StockEntriesPage />} />
-                            <Route path="/productos/:id" element={<ProductPage />} />
-                            <Route path="/productos/:id/variante/:vid" element={<ProductPage />} />
+                            <Route path="/productos/:slugId" element={<ProductPage />} />
+                            <Route path="/productos/:slugId/variante/:vid" element={<ProductPage />} />
                             <Route path="/carrito" element={<CartPage />} />
                             <Route path="/checkout" element={<CheckoutPage />} />
                             <Route path="/pedido-confirmado" element={<ConfirmationPage />} />
