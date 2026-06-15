@@ -29,10 +29,6 @@
     border-color: var(--border-strong);
 }
 
-.card:hover .img {
-    transform: scale(1.04);
-}
-
 .card:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
@@ -236,6 +232,48 @@
 
 .arrow_btn:hover {
     background: rgba(16, 15, 14, 0.95);
+}
+
+.add_btn {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: var(--accent);
+    border: none;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    color: var(--bg);
+    cursor: pointer;
+    z-index: 2;
+    box-shadow: var(--shadow-hover);
+    transition: background 0.15s, transform 0.15s;
+    padding: 0;
+    line-height: 1;
+}
+
+.add_btn:hover {
+    transform: scale(1.06);
+}
+
+.add_btn_done {
+    background: var(--success);
+}
+
+@keyframes shake {
+    10%, 90% { transform: translateX(-1px); }
+    20%, 80% { transform: translateX(2px); }
+    30%, 50%, 70% { transform: translateX(-3px); }
+    40%, 60% { transform: translateX(3px); }
+}
+
+.add_btn_blocked {
+    background: var(--text-h);
+    animation: shake 0.5s;
 }
 
 .dots {

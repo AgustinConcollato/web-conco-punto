@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { IMAGE_URL } from '../../../../config/api';
 import { getPrice, usePriceContext } from '../../../../context/PriceContext';
+import { useCartContext } from '../../../../context/CartContext';
 import { formatPrice } from '../../../../utils/formatPrice';
 import { getActivePromo, calcPromoPrice, promoLabel, promoEndLabel } from '../../../../utils/promo';
 import styles from './ProductCard.module.css';
 
 export function ProductCard({ product, variant }) {
     const { priceListId } = usePriceContext();
+    const { addItem } = useCartContext();
     const price = getPrice(product.price_lists, priceListId);
 
     const promo = getActivePromo(product.promotions, priceListId);
@@ -35,6 +37,40 @@ export function ProductCard({ product, variant }) {
         e.preventDefault();
         e.stopPropagation();
         setImgIdx(i => (i + 1) % images.length);
+    };
+
+    const [added, setAdded] = useState(false);
+    const [blocked, setBlocked] = useState(false);
+    const addedTimerRef = useRef(null);
+    const blockedTimerRef = useRef(null);
+    useEffect(() => () => {
+        if (addedTimerRef.current) clearTimeout(addedTimerRef.current);
+        if (blockedTimerRef.current) clearTimeout(blockedTimerRef.current);
+    }, []);
+
+    const handleAddToCart = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const addedQty = addItem({
+            product_id: product.id,
+            variant_id: variant?.id ?? null,
+            name: product.name,
+            sku,
+            price,
+            promo: promo ?? null,
+            qty: 1,
+            stock,
+            image_url: thumb ?? null,
+        });
+        if (addedQty <= 0) {
+            setBlocked(true);
+            if (blockedTimerRef.current) clearTimeout(blockedTimerRef.current);
+            blockedTimerRef.current = setTimeout(() => setBlocked(false), 500);
+            return;
+        }
+        setAdded(true);
+        if (addedTimerRef.current) clearTimeout(addedTimerRef.current);
+        addedTimerRef.current = setTimeout(() => setAdded(false), 1500);
     };
 
     return (
@@ -67,6 +103,15 @@ export function ProductCard({ product, variant }) {
                             ))}
                         </div>
                     </>
+                )}
+                {stock > 0 && price !== null && (
+                    <button
+                        className={`${styles.add_btn} ${added ? styles.add_btn_done : ''} ${blocked ? styles.add_btn_blocked : ''}`}
+                        onClick={handleAddToCart}
+                        title="Agregar al carrito"
+                    >
+                        <i className={`hgi hgi-stroke hgi-rounded ${added ? 'hgi-shopping-cart-check-02' : 'hgi-shopping-cart-add-02'}`} />
+                    </button>
                 )}
             </div>
             <div className={styles.body}>

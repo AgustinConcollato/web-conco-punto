@@ -17,7 +17,7 @@ export function SearchBar() {
     const handleSearch = (q) => {
         const params = new URLSearchParams();
         if (q) params.set('q', q);
-        navigate(`/?${params}`, { replace: true });
+        navigate(`/buscar?${params}`, { replace: true });
     };
 
     return (

@@ -1,0 +1,53 @@
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-h);
+    margin: 0;
+    letter-spacing: -0.2px;
+}
+
+.view_all {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+}
+
+.view_all:hover {
+    opacity: 0.7;
+}
+
+.row {
+    display: flex;
+    gap: 16px;
+}
+
+.card_wrap {
+    flex: 0 0 230px;
+    min-width: 0;
+}
+
+@media (max-width: 700px) {
+    .row {
+        gap: 12px;
+    }
+
+    .card_wrap {
+        flex-basis: 150px;
+    }
+}

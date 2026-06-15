@@ -44,5 +44,6 @@ export function usePriceContext() {
 }
 
 export function getPrice(priceLists, priceListId) {
-    return priceLists?.find(pl => pl.id === priceListId)?.price ?? null;
+    const pl = priceLists?.find(pl => pl.id === priceListId);
+    return pl?.price ?? pl?.pivot?.price ?? null;
 }

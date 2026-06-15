@@ -32,21 +32,28 @@ export function CartProvider({ children }) {
     };
 
     const addItem = (item) => {
+        let addedQty = 0;
         setItems(prev => {
             const idx = prev.findIndex(i => isSameItem(i, item));
             let next;
             if (idx >= 0) {
                 const cap = item.stock ?? prev[idx].stock ?? Infinity;
                 const newQty = Math.min(prev[idx].qty + item.qty, cap);
+                addedQty = newQty - prev[idx].qty;
                 next = prev.map((i, k) => k === idx ? { ...i, qty: newQty, stock: item.stock ?? i.stock } : i);
             } else {
                 const cap = item.stock ?? Infinity;
-                next = [...prev, { ...item, qty: Math.min(item.qty, cap) }];
+                const newQty = Math.min(item.qty, cap);
+                addedQty = newQty;
+                next = [...prev, { ...item, qty: newQty }];
             }
             saveCart(next);
             return next;
         });
-        setLastAdded(item);
+        if (addedQty > 0) {
+            setLastAdded(prev => (prev && isSameItem(prev, item)) ? { ...item, qty: prev.qty + addedQty } : { ...item, qty: addedQty });
+        }
+        return addedQty;
     };
 
     const clearLastAdded = () => setLastAdded(null);

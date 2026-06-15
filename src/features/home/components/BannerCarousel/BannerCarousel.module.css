@@ -1,0 +1,106 @@
+.carousel {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+}
+
+.track {
+    display: flex;
+    transition: transform 0.45s ease;
+}
+
+.slide {
+    flex: 0 0 100%;
+    min-width: 100%;
+    display: block;
+    line-height: 0;
+}
+
+.img {
+    width: 100%;
+    height: auto;
+    max-height: 420px;
+    object-fit: contain;
+    display: block;
+}
+
+.arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--text-h);
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.14s;
+    opacity: 0;
+}
+
+.carousel:hover .arrow,
+.arrow:focus-visible {
+    opacity: 1;
+}
+
+.arrow:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.arrow:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.arrow_left {
+    left: 12px;
+}
+
+.arrow_right {
+    right: 12px;
+}
+
+.dots {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.55);
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.14s, transform 0.14s;
+}
+
+.dot:hover {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.dot_active {
+    background: #fff;
+    transform: scale(1.2);
+}
+
+@media (max-width: 700px) {
+    .img {
+        max-height: 220px;
+    }
+
+    .arrow {
+        display: none;
+    }
+}

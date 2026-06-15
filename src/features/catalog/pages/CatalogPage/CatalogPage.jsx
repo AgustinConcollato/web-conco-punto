@@ -90,7 +90,7 @@ export function CatalogPage() {
             {slug && activeCategory ? (
                 <div className={styles.category_header}>
                     <nav className={styles.breadcrumb}>
-                        <Link to="/" className={styles.bc_link}>Catálogo</Link>
+                        <Link to="/" className={styles.bc_link}>Inicio</Link>
                         <span className={styles.bc_sep}>›</span>
                         <Link to={`/categoria/${slug}`} className={styles.bc_link}>
                             {parentCategory.name}
@@ -179,7 +179,7 @@ export function CatalogPage() {
                                 <button className={styles.empty_action_btn} onClick={clearSearch}>
                                     Limpiar búsqueda
                                 </button>
-                                <Link to="/" className={styles.empty_action_link}>Ver todo el catálogo</Link>
+                                <Link to="/buscar" className={styles.empty_action_link}>Ver todo el catálogo</Link>
                             </div>
                         </>
                     ) : activeCategory ? (
@@ -192,7 +192,7 @@ export function CatalogPage() {
                                         Ver todo en {parentCategory.name}
                                     </Link>
                                 )}
-                                <Link to="/" className={styles.empty_action_link}>Explorar catálogo</Link>
+                                <Link to="/buscar" className={styles.empty_action_link}>Explorar catálogo</Link>
                             </div>
                         </>
                     ) : (

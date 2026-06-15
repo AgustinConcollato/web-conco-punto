@@ -171,7 +171,7 @@ export function ProductPage() {
 
     return (
         <div className={styles.page}>
-            <Link to={firstCategoryTo} className={styles.back}>← {firstCategoryName ?? 'Catálogo'}</Link>
+            <button onClick={() => window.history.back() ?? navigate('/')} className={styles.back}>← Volver</button>
 
             <div className={styles.layout}>
                 <div className={styles.gallery_col}>

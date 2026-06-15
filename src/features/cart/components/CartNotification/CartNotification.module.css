@@ -23,6 +23,21 @@
     }
 }
 
+.leaving {
+    animation: slideUp 0.18s ease-in forwards;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
 .header {
     display: flex;
     align-items: center;

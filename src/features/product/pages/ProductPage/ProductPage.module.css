@@ -21,6 +21,10 @@
     transition: color 0.15s;
     letter-spacing: 0.03em;
     text-transform: uppercase;
+    background: transparent;
+    width: max-content;
+    border: none;
+    cursor: pointer;
 }
 
 .back:hover {

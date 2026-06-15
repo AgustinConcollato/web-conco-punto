@@ -1,0 +1,26 @@
+.page {
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 36px 32px 72px;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    box-sizing: border-box;
+}
+
+.waiting {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    color: var(--text-soft);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 700px) {
+    .page {
+        padding: 24px 16px 48px;
+        gap: 32px;
+    }
+}

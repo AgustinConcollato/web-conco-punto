@@ -19,3 +19,20 @@ export const getProduct = (id, priceListId) => {
 };
 
 export const getCategories = () => get('/categories');
+
+export const getNewArrivals = (priceListId) => {
+    const qs = priceListId ? `?price_list_id=${priceListId}` : '';
+    return get(`/catalog/new-arrivals${qs}`);
+};
+
+export const getBestSellers = (priceListId) => {
+    const qs = priceListId ? `?price_list_id=${priceListId}` : '';
+    return get(`/catalog/best-sellers${qs}`);
+};
+
+export const getPublicPromotions = (priceListId) => {
+    const qs = priceListId ? `?price_list_id=${priceListId}` : '';
+    return get(`/promotions/public${qs}`);
+};
+
+export const getHomeLayout = () => get('/home-layout');

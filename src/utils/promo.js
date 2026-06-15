@@ -40,6 +40,18 @@ export function promoEndLabel(promo) {
     return `Descuento valido hasta ${formatDate(promo.ends_at, 'short')}`;
 }
 
+export function promoEndDisplay(promo) {
+    if (!promo?.ends_at) return null;
+    const end = new Date(promo.ends_at);
+    const now = new Date();
+    const endDay = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const diffDays = Math.round((endDay - today) / 86400000);
+    if (diffDays <= 0) return { text: 'Último día', urgent: true };
+    if (diffDays < 5) return { text: `Termina en ${diffDays} ${diffDays === 1 ? 'día' : 'días'}`, urgent: true };
+    return { text: `Válido hasta ${formatDate(promo.ends_at, 'short')}`, urgent: false };
+}
+
 export function calcEffectivePrice(price, promo, qty) {
     if (!promo || price === null || price === undefined) return price;
     const p = Number(price);
