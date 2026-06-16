@@ -158,13 +158,17 @@ export function ProductPage() {
 
     const displayImages = (selectedVariant?.images?.length ? selectedVariant.images : product.images) ?? [];
     const displayStock = selectedVariant !== null ? selectedVariant.stock : product.stock;
+    const isDropship = !!product.is_dropshipping;
     const displaySku = selectedVariant?.sku ?? product.sku;
 
     const inCart = cartItems.find(i =>
         i.product_id === product.id &&
         (i.variant_id ?? null) === (selectedVariant?.id ?? null)
     )?.qty ?? 0;
-    const available = Math.max(0, displayStock - inCart);
+    // Dropshipping: disponibilidad sin tope (no se conoce el stock exacto del proveedor)
+    const available = isDropship
+        ? (displayStock > 0 ? Infinity : 0)
+        : Math.max(0, displayStock - inCart);
 
     const effectiveAttrs = selectedVariant
         ? mergeAttrs(product.attribute_values, selectedVariant.attribute_values)
@@ -270,7 +274,11 @@ export function ProductPage() {
                                                         : <>{product.sku ?? 'Base'}</>
                                                     }
                                                 </span>
-                                                <span className={styles.tooltip_stock}>Stock: {product.stock}</span>
+                                                <span className={`${styles.tooltip_stock} ${isDropship && product.stock > 0 ? styles.available : ''}`}>
+                                                    {isDropship
+                                                        ? (product.stock > 0 ? 'Disponible' : 'Sin stock')
+                                                        : `Stock: ${product.stock}`}
+                                                </span>
                                             </div>
                                         </div>
                                     );
@@ -304,7 +312,11 @@ export function ProductPage() {
                                                         : <>{v.sku ?? 'Variante'}</>
                                                     }
                                                 </span>
-                                                <span className={styles.tooltip_stock}>Stock: {v.stock}</span>
+                                                <span className={`${styles.tooltip_stock} ${isDropship && v.stock > 0 ? styles.available : ''}`}>
+                                                    {isDropship
+                                                        ? (v.stock > 0 ? 'Disponible' : 'Sin stock')
+                                                        : `Stock: ${v.stock}`}
+                                                </span>
                                             </div>
                                         </div>
                                     );
@@ -340,8 +352,10 @@ export function ProductPage() {
                     </div>
 
                     <div className={styles.stock_row}>
-                        <span className={styles.stock}>
-                            {displayStock > 0 ? `Stock: ${displayStock}` : 'Sin stock'}
+                        <span className={`${styles.stock} ${isDropship && displayStock > 0 ? styles.available : ''}`}>
+                            {isDropship
+                                ? (displayStock > 0 ? 'Disponible' : 'Sin stock')
+                                : (displayStock > 0 ? `Stock: ${displayStock}` : 'Sin stock')}
                         </span>
                         {inCart > 0 && displayStock > 0 && (
                             <span className={styles.in_cart_note}>{inCart} en el carrito</span>
@@ -389,7 +403,7 @@ export function ProductPage() {
                                     price: price ?? 0,
                                     promo: promo ?? null,
                                     qty,
-                                    stock: displayStock,
+                                    stock: isDropship ? Infinity : displayStock,
                                     image_url: displayImages[0]?.thumbnail_path ?? null,
                                 });
                                 if (addedTimerRef.current) clearTimeout(addedTimerRef.current);

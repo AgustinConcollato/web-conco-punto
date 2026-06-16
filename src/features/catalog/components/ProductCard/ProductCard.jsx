@@ -23,6 +23,8 @@ export function ProductCard({ product, variant }) {
     const hasMultiple = images.length > 1;
 
     const stock = variant != null ? variant.stock : product.stock;
+    const isDropship = !!product.is_dropshipping;
+    const available = stock > 0;
     const sku = variant ? (variant.sku ?? product.sku) : product.sku;
     const to = productHref(product, variant);
     const variantLabel = variant
@@ -60,7 +62,7 @@ export function ProductCard({ product, variant }) {
             price,
             promo: promo ?? null,
             qty: 1,
-            stock,
+            stock: isDropship ? Infinity : stock,
             image_url: thumb ?? null,
         });
         if (addedQty <= 0) {
@@ -91,7 +93,7 @@ export function ProductCard({ product, variant }) {
                 ) : (
                     <div className={styles.no_img}>Sin imagen</div>
                 )}
-                {stock === 0 && (
+                {!available && (
                     <span className={styles.out_badge}>Sin stock</span>
                 )}
                 {hasMultiple && (
@@ -105,7 +107,7 @@ export function ProductCard({ product, variant }) {
                         </div>
                     </>
                 )}
-                {stock > 0 && price !== null && (
+                {available && price !== null && (
                     <button
                         className={`${styles.add_btn} ${added ? styles.add_btn_done : ''} ${blocked ? styles.add_btn_blocked : ''}`}
                         onClick={handleAddToCart}
@@ -120,7 +122,11 @@ export function ProductCard({ product, variant }) {
                 {variantLabel && <p className={styles.variant_label}>{variantLabel}</p>}
                 <div className={styles.info}>
                     {sku && <p className={styles.sku}>{sku}</p>}
-                    {stock != null && (
+                    {isDropship ? (
+                        <p className={`${styles.stock} ${available ? styles.available : ''}`}>
+                            {available ? 'Disponible' : 'Sin stock'}
+                        </p>
+                    ) : stock != null && (
                         <p className={styles.stock}>
                             {stock === 0 ? 'Sin stock' : `Stock: ${stock}`}
                         </p>

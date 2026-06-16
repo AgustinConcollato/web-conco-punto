@@ -193,6 +193,11 @@
     font-weight: 600;
 }
 
+.stock.available {
+    background: #16a34a20;
+    color: #16a34a;
+}
+
 .in_cart_note {
     font-size: 0.72rem;
     font-weight: 600;
@@ -333,6 +338,12 @@
 .tooltip_stock {
     color: var(--text);
     opacity: 0.7;
+}
+
+.tooltip_stock.available {
+    color: #16a34a;
+    opacity: 1;
+    font-weight: 600;
 }
 
 .swatch {

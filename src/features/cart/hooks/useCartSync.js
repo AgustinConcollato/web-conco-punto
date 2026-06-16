@@ -34,7 +34,13 @@ export function useCartSync({ items, syncCartStocks }) {
                             const variant = product.variants?.find(
                                 v => String(v.id) === String(item.variant_id) && v.is_active
                             );
-                            currentStock = variant?.stock ?? 0;
+                            const vStock = variant?.stock ?? 0;
+                            // Dropshipping: disponible = ilimitado; agotado = 0 (se quita del carrito)
+                            currentStock = product.is_dropshipping
+                                ? (vStock > 0 ? Infinity : 0)
+                                : vStock;
+                        } else if (product.is_dropshipping) {
+                            currentStock = (product.stock ?? 0) > 0 ? Infinity : 0;
                         } else {
                             currentStock = product.stock ?? 0;
                         }

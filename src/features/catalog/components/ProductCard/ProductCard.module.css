@@ -130,6 +130,11 @@
     line-height: 1;
 }
 
+.stock.available {
+    background: #16a34a20;
+    color: #16a34a;
+}
+
 .price {
     font-size: 1.1rem;
     font-weight: 700;
