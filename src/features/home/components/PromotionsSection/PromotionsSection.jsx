@@ -1,5 +1,6 @@
 import { ProductCard } from '../../../catalog/components/ProductCard/ProductCard';
 import { HorizontalScroller } from '../../../../components/HorizontalScroller/HorizontalScroller';
+import { productCards } from '../../../../utils/productCards';
 import { promoEndDisplay } from '../../../../utils/promo';
 import styles from './PromotionsSection.module.css';
 
@@ -35,21 +36,13 @@ export function PromotionsSection({ promotions, title }) {
 
                     {promo.products?.length > 0 && (
                         <HorizontalScroller className={styles.grid}>
-                            {promo.products.flatMap(p => {
-                                const variants = (p.variants ?? []).filter(v => v.is_active !== false && v.stock > 0);
-                                if (variants.length > 0) {
-                                    return variants.map(v => (
-                                        <div key={`v-${v.id}`} className={styles.card_wrap}>
-                                            <ProductCard product={p} variant={v} />
-                                        </div>
-                                    ));
-                                }
-                                return [
-                                    <div key={`p-${p.id}`} className={styles.card_wrap}>
-                                        <ProductCard product={p} />
+                            {promo.products.flatMap(p =>
+                                productCards(p).map(c => (
+                                    <div key={c.key} className={styles.card_wrap}>
+                                        <ProductCard product={p} variant={c.variant} />
                                     </div>
-                                ];
-                            })}
+                                ))
+                            )}
                         </HorizontalScroller>
                     )}
                 </div>

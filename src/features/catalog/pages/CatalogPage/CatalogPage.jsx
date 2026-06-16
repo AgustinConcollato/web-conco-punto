@@ -3,7 +3,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { getCategories, getProducts } from '../../services/catalogService';
 import { usePriceContext } from '../../../../context/PriceContext';
 import { ProductCard } from '../../components/ProductCard/ProductCard';
-import { queryMatchCards } from '../../../../utils/productCards';
+import { productCards } from '../../../../utils/productCards';
 import { slugify } from '../../../../utils/slugify';
 import { absoluteUrl } from '../../../../config/api';
 import { Seo } from '../../../../components/Seo/Seo';
@@ -234,23 +234,9 @@ export function CatalogPage() {
                 </div>
             ) : (
                 <div className={styles.grid}>
-                    {products.flatMap(p => {
-                        const matched = queryMatchCards(p, q);
-                        if (matched !== null) {
-                            return matched.map(c => <ProductCard key={c.key} product={p} variant={c.variant} />);
-                        }
-
-                        const inStockVariants = (p.variants ?? []).filter(v => v.is_active !== false && v.stock > 0);
-                        const showBase = p.stock > 0 || inStockVariants.length === 0;
-
-                        if (inStockVariants.length === 0) {
-                            return showBase ? [<ProductCard key={`p-${p.id}`} product={p} />] : [];
-                        }
-                        return [
-                            ...(showBase ? [<ProductCard key={`p-${p.id}`} product={p} />] : []),
-                            ...inStockVariants.map(v => <ProductCard key={`v-${v.id}`} product={p} variant={v} />),
-                        ];
-                    })}
+                    {products.flatMap(p =>
+                        productCards(p, q).map(c => <ProductCard key={c.key} product={p} variant={c.variant} />)
+                    )}
                 </div>
             )}
 

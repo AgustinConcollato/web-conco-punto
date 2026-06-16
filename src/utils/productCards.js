@@ -36,3 +36,19 @@ export function queryMatchCards(product, query) {
     // El producto matcheó por nombre/descripción (búsqueda backend): usar default.
     return null;
 }
+
+// Default sin query: base (si tiene stock o no hay variantes) + variantes con stock.
+export function defaultCards(product) {
+    const inStockVariants = (product.variants ?? []).filter(v => v.is_active !== false && v.stock > 0);
+    const showBase = product.stock > 0 || inStockVariants.length === 0;
+
+    return [
+        ...(showBase ? [{ key: `p-${product.id}` }] : []),
+        ...inStockVariants.map(v => ({ key: `v-${v.id}`, variant: v })),
+    ];
+}
+
+// Punto de entrada único: filtra por query si hay, si no aplica el default.
+export function productCards(product, query) {
+    return queryMatchCards(product, query) ?? defaultCards(product);
+}
