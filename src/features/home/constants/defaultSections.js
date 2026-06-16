@@ -12,12 +12,12 @@ export const DEFAULT_SECTIONS = [
             limit: 12,
         },
     },
-    {
-        id: 'default-promotions',
-        type: 'promotions',
-        visible: true,
-        settings: { title: '' },
-    },
+    // {
+    //     id: 'default-promotions',
+    //     type: 'promotions',
+    //     visible: true,
+    //     settings: { title: '' },
+    // },
     {
         id: 'default-best-sellers',
         type: 'products',

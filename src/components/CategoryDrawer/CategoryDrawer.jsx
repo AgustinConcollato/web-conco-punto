@@ -99,6 +99,8 @@ export function CategoryDrawer({ open, onClose }) {
                             className={styles.parent_link}
                         >
                             {selectedParent?.name}
+
+                            <button> Ver todo</button>
                         </Link>
                         <button className={styles.close_btn} onClick={onClose} aria-label="Cerrar">×</button>
                     </div>
