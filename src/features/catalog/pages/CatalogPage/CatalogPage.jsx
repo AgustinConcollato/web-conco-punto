@@ -3,6 +3,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { getCategories, getProducts } from '../../services/catalogService';
 import { usePriceContext } from '../../../../context/PriceContext';
 import { ProductCard } from '../../components/ProductCard/ProductCard';
+import { queryMatchCards } from '../../../../utils/productCards';
 import { slugify } from '../../../../utils/slugify';
 import { absoluteUrl } from '../../../../config/api';
 import { Seo } from '../../../../components/Seo/Seo';
@@ -234,43 +235,20 @@ export function CatalogPage() {
             ) : (
                 <div className={styles.grid}>
                     {products.flatMap(p => {
-                        const allVariants = p.variants ?? [];
-                        const inStockVariants = allVariants.filter(v => v.is_active !== false && v.stock > 0);
-
-                        if (q) {
-                            const term = q.toLowerCase();
-
-                            const matchingInStock = inStockVariants.filter(v =>
-                                v.sku?.toLowerCase().includes(term) ||
-                                (v.attribute_values ?? []).some(av => av.value?.toLowerCase().includes(term))
-                            );
-                            if (matchingInStock.length > 0) {
-                                return matchingInStock.map(v => <ProductCard key={`v-${v.id}`} product={p} variant={v} />);
-                            }
-
-                            const outOfStockMatches = allVariants.some(v =>
-                                v.sku?.toLowerCase().includes(term) ||
-                                (v.attribute_values ?? []).some(av => av.value?.toLowerCase().includes(term))
-                            );
-                            if (outOfStockMatches) return [];
-
-                            const productAttrMatches = (p.attribute_values ?? []).some(av =>
-                                av.value?.toLowerCase().includes(term)
-                            );
-                            if (productAttrMatches) {
-                                return p.stock > 0 ? [<ProductCard key={`p-${p.id}`} product={p} />] : [];
-                            }
+                        const matched = queryMatchCards(p, q);
+                        if (matched !== null) {
+                            return matched.map(c => <ProductCard key={c.key} product={p} variant={c.variant} />);
                         }
 
-                        const variantsToShow = inStockVariants;
-                        const showBase = p.stock > 0 || variantsToShow.length === 0;
+                        const inStockVariants = (p.variants ?? []).filter(v => v.is_active !== false && v.stock > 0);
+                        const showBase = p.stock > 0 || inStockVariants.length === 0;
 
-                        if (variantsToShow.length === 0) {
+                        if (inStockVariants.length === 0) {
                             return showBase ? [<ProductCard key={`p-${p.id}`} product={p} />] : [];
                         }
                         return [
                             ...(showBase ? [<ProductCard key={`p-${p.id}`} product={p} />] : []),
-                            ...variantsToShow.map(v => <ProductCard key={`v-${v.id}`} product={p} variant={v} />),
+                            ...inStockVariants.map(v => <ProductCard key={`v-${v.id}`} product={p} variant={v} />),
                         ];
                     })}
                 </div>

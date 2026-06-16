@@ -28,6 +28,7 @@ export function SectionRenderer({ sections, data }) {
                         title={settings?.title}
                         products={limited}
                         viewAllHref={settings?.viewAllHref || undefined}
+                        keyword={settings?.source === 'keyword' ? settings?.keyword : undefined}
                     />
                 );
             }
