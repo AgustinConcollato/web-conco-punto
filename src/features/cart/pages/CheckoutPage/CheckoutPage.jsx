@@ -118,7 +118,7 @@ export function CheckoutPage() {
         };
 
         try {
-            const { order_id } = await postWholesaleOrder(payload);
+            const { order_id, order_number } = await postWholesaleOrder(payload);
 
             if (!isLogged) {
                 localStorage.setItem(PREFILL_KEY, JSON.stringify({
@@ -147,7 +147,7 @@ export function CheckoutPage() {
                 }
             }
 
-            navigate(`/pedido-confirmado?order=${order_id}`, { replace: true, state: { registrationResult } });
+            navigate(`/pedido-confirmado?number=${order_number ?? ''}`, { replace: true, state: { registrationResult } });
         } catch (err) {
             if (Array.isArray(err?.stock_errors)) {
                 const stockMap = new Map(

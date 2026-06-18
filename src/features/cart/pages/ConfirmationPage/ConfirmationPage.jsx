@@ -4,7 +4,7 @@ import styles from './ConfirmationPage.module.css';
 
 export function ConfirmationPage() {
     const [searchParams] = useSearchParams();
-    const orderId = searchParams.get('order');
+    const orderNumber = searchParams.get('number');
     const { state } = useLocation();
     const regResult = state?.registrationResult ?? null;
 
@@ -15,11 +15,11 @@ export function ConfirmationPage() {
                 <div className={styles.check} aria-hidden="true">✓</div>
                 <h1 className={styles.title}>¡Pedido recibido!</h1>
                 <p className={styles.body}>
-                    Nos contactaremos a la brevedad para coordinar el pago y los detalles del envío.
+                    Nos contactaremos para coordinar el pago y los detalles del envío.
                 </p>
-                {orderId && (
+                {orderNumber && (
                     <p className={styles.order_id}>
-                        ID de pedido: <strong>{orderId}</strong>
+                        Número de pedido: <strong>#{orderNumber}</strong>
                     </p>
                 )}
 
