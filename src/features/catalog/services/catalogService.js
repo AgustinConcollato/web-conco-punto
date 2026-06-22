@@ -35,4 +35,9 @@ export const getPublicPromotions = (priceListId) => {
     return get(`/promotions/public${qs}`);
 };
 
+export const getPromotion = (id, priceListId) => {
+    const qs = priceListId ? `?price_list_id=${priceListId}` : '';
+    return get(`/promotions/${id}/public${qs}`);
+};
+
 export const getHomeLayout = () => get('/home-layout');

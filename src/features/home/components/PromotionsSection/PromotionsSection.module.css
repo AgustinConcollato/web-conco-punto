@@ -22,12 +22,32 @@
     gap: 8px;
 }
 
+.promo_title_row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
 .promo_title {
     font-size: 1.15rem;
     font-weight: 600;
     color: var(--text-h);
     margin: 0;
     letter-spacing: -0.2px;
+}
+
+.promo_see_all {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--primary, #3d6caa);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.promo_see_all:hover {
+    text-decoration: underline;
 }
 
 .promo_desc {

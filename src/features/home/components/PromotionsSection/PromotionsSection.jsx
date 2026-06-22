@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { ProductCard } from '../../../catalog/components/ProductCard/ProductCard';
 import { HorizontalScroller } from '../../../../components/HorizontalScroller/HorizontalScroller';
 import { productCards } from '../../../../utils/productCards';
@@ -23,7 +24,12 @@ export function PromotionsSection({ promotions, title }) {
                 return (
                 <div key={promo.id} className={styles.promo_block}>
                     <div className={styles.promo_header}>
-                        <h2 className={styles.promo_title}>{title || promo.name}</h2>
+                        <div className={styles.promo_title_row}>
+                            <h2 className={styles.promo_title}>{title || promo.name}</h2>
+                            <Link to={`/promocion/${promo.id}`} className={styles.promo_see_all}>
+                                Ver todos →
+                            </Link>
+                        </div>
                         {promo.description && (
                             <p className={styles.promo_desc}>{promo.description}</p>
                         )}

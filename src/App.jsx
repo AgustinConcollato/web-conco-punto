@@ -16,6 +16,7 @@ import { ConfirmationPage } from './features/cart/pages/ConfirmationPage/Confirm
 import { LoginPage } from './features/auth/pages/LoginPage/LoginPage';
 import { RegisterPage } from './features/auth/pages/RegisterPage/RegisterPage';
 import { ProfilePage } from './features/account/pages/ProfilePage/ProfilePage';
+import { PromotionPage } from './features/catalog/pages/PromotionPage/PromotionPage';
 
 function App() {
     return (
@@ -40,6 +41,7 @@ function App() {
                             <Route path="/iniciar-sesion" element={<LoginPage />} />
                             <Route path="/registro" element={<RegisterPage />} />
                             <Route path="/perfil" element={<ProfilePage />} />
+                            <Route path="/promocion/:id" element={<PromotionPage />} />
                         </Routes>
                         <SiteFooter />
                     </BrowserRouter>

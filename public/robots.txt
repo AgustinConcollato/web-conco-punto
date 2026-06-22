@@ -8,4 +8,4 @@ Disallow: /iniciar-sesion
 Disallow: /registro
 Disallow: /vista-previa-home
 
-Sitemap: https://mayorista.concoypunto.com/sitemap.xml
+Sitemap: https://api-v2.concoypunto.com/api/sitemap.xml
