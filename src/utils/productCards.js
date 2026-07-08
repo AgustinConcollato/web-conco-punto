@@ -10,12 +10,24 @@ export function queryMatchCards(product, query) {
     if (!query) return null;
 
     const term = query.toLowerCase();
+    const words = term.split(/\s+/).filter(Boolean);
     const allVariants = product.variants ?? [];
     const inStockVariants = allVariants.filter(v => v.is_active !== false && v.stock > 0);
 
-    const matches = (v) =>
-        v.sku?.toLowerCase().includes(term) ||
-        (v.attribute_values ?? []).some(av => av.value?.toLowerCase().includes(term));
+    // Una variante matchea si ALGUNA palabra de la búsqueda coincide con su sku o
+    // alguno de sus atributos. Así "gorro rojo" filtra a la variante "Rojo" (por la
+    // palabra "rojo"), en vez de comparar la frase entera y no matchear ninguna.
+    // Match exacto para palabras cortas (talles: "M", "S"), substring desde 2 chars
+    // (colores, "xl"), para evitar ruido tipo "m" dentro de "amarillo".
+    const matches = (v) => {
+        const sku = v.sku?.toLowerCase() ?? '';
+        const attrs = (v.attribute_values ?? []).map(av => av.value?.toLowerCase() ?? '');
+        return words.some(w => {
+            if (attrs.some(a => a === w)) return true;
+            if (w.length < 2) return false;
+            return sku.includes(w) || attrs.some(a => a.includes(w));
+        });
+    };
 
     const matchingInStock = inStockVariants.filter(matches);
     if (matchingInStock.length > 0) {
@@ -25,15 +37,10 @@ export function queryMatchCards(product, query) {
     // La variante que matchea está sin stock: no mostrar nada de este producto.
     if (allVariants.some(matches)) return [];
 
-    // Matchea un atributo del producto base (no de una variante).
-    const productAttrMatches = (product.attribute_values ?? []).some(av =>
-        av.value?.toLowerCase().includes(term)
-    );
-    if (productAttrMatches) {
-        return product.stock > 0 ? [{ key: `p-${product.id}` }] : [];
-    }
-
-    // El producto matcheó por nombre/descripción (búsqueda backend): usar default.
+    // No matcheó ninguna variante: el producto vino por nombre/descripción o por un
+    // atributo general del base (que las variantes comparten, ej. "Gorro"). En todos
+    // esos casos mostramos el set por defecto (base con stock + variantes con stock),
+    // sin colapsar al producto base ni ocultar las variantes.
     return null;
 }
 
