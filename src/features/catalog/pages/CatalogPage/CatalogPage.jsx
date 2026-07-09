@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { getCategories, getProducts } from '../../services/catalogService';
 import { usePriceContext } from '../../../../context/PriceContext';
 import { ProductCard } from '../../components/ProductCard/ProductCard';
-import { productCards } from '../../../../utils/productCards';
+import { productCards, defaultCards, productMatchesQuery } from '../../../../utils/productCards';
 import { slugify } from '../../../../utils/slugify';
 import { absoluteUrl } from '../../../../config/api';
 import { Seo } from '../../../../components/Seo/Seo';
@@ -111,6 +111,35 @@ export function CatalogPage() {
         }, { replace: true });
     };
 
+    // Resultados reales: con búsqueda, solo los productos que satisfacen TODAS las palabras
+    // y que aportan al menos una card con stock. (El backend ya filtra con AND, pero además
+    // acá descartamos, p. ej., un "gorro rojo" cuyo único rojo está sin stock.)
+    const { cards, hasRealResults } = useMemo(() => {
+        const build = (prods) => prods.flatMap(p => productCards(p, q).map(cd => ({ p, c: cd })));
+        const source = q ? products.filter(p => productMatchesQuery(p, q)) : products;
+        const list = build(source);
+        return { cards: list, hasRealResults: list.length > 0 };
+    }, [products, q]);
+
+    // Si la búsqueda estricta no dio resultados con stock, buscamos sugerencias relajando la
+    // query: sacamos la última palabra ("gorro rojo" -> "gorro"). Solo para queries multi-palabra.
+    const [suggestions, setSuggestions] = useState([]);
+    useEffect(() => {
+        const words = q.trim().split(/\s+/).filter(Boolean);
+        if (loading || fetchError || hasRealResults || words.length < 2) {
+            setSuggestions([]);
+            return;
+        }
+        const relaxed = words.slice(0, -1).join(' ');
+        let active = true;
+        getProducts({ search: relaxed, category_id: categoryId, per_page: 12, stock_min: 1, price_list_id: priceListId })
+            .then(d => { if (active) setSuggestions(d.data ?? []); })
+            .catch(() => { if (active) setSuggestions([]); });
+        return () => { active = false; };
+    }, [q, hasRealResults, loading, fetchError, categoryId, priceListId]);
+
+    const suggestionCards = suggestions.flatMap(p => defaultCards(p).map(cd => ({ p, c: cd })));
+
     return (
         <div className={styles.page}>
             <Seo
@@ -202,7 +231,25 @@ export function CatalogPage() {
                         Reintentar
                     </button>
                 </div>
-            ) : products.length === 0 ? (
+            ) : hasRealResults ? (
+                <div className={styles.grid}>
+                    {cards.map(({ p, c }) => (
+                        <ProductCard key={c.key} product={p} variant={c.variant} />
+                    ))}
+                </div>
+            ) : suggestionCards.length > 0 ? (
+                <>
+                    <div className={styles.suggest_notice}>
+                        <p className={styles.suggest_title}>Sin resultados para "{q}"</p>
+                        <p className={styles.suggest_sub}>Quizás te interese:</p>
+                    </div>
+                    <div className={styles.grid}>
+                        {suggestionCards.map(({ p, c }) => (
+                            <ProductCard key={c.key} product={p} variant={c.variant} />
+                        ))}
+                    </div>
+                </>
+            ) : (
                 <div className={styles.empty_state} role="status">
                     {q ? (
                         <>
@@ -230,12 +277,6 @@ export function CatalogPage() {
                         </>
                     ) : (
                         <p className={styles.empty_title}>Sin productos disponibles.</p>
-                    )}
-                </div>
-            ) : (
-                <div className={styles.grid}>
-                    {products.flatMap(p =>
-                        productCards(p, q).map(c => <ProductCard key={c.key} product={p} variant={c.variant} />)
                     )}
                 </div>
             )}

@@ -59,3 +59,28 @@ export function defaultCards(product) {
 export function productCards(product, query) {
     return queryMatchCards(product, query) ?? defaultCards(product);
 }
+
+// ¿El producto satisface TODAS las palabras de la búsqueda? Busca cada palabra en
+// nombre + sku + atributos del base y de las variantes. Sirve para distinguir un
+// resultado real de una sugerencia: "gorro rojo" en un gorro sin rojo -> false.
+// Palabras de 1 char: match de token exacto (talles "M"/"S"); ≥2 chars: substring.
+// Sin query -> true.
+export function productMatchesQuery(product, query) {
+    const words = (query ?? '').toLowerCase().split(/\s+/).filter(Boolean);
+    if (!words.length) return true;
+
+    const parts = [
+        product.name,
+        product.sku,
+        ...(product.attribute_values ?? []).map(a => a.value),
+        ...(product.variants ?? []).flatMap(v => [
+            v.sku,
+            ...(v.attribute_values ?? []).map(a => a.value),
+        ]),
+    ].filter(Boolean);
+
+    const hay = parts.join(' ').toLowerCase();
+    const tokens = hay.split(/\s+/);
+
+    return words.every(w => (w.length >= 2 ? hay.includes(w) : tokens.includes(w)));
+}

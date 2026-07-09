@@ -282,6 +282,25 @@
 }
 
 /* Empty state */
+.suggest_notice {
+    margin: 4px 0 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border, #e7e2da);
+}
+
+.suggest_title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-h);
+    margin: 0 0 4px;
+}
+
+.suggest_sub {
+    font-size: 0.9rem;
+    color: var(--text);
+    margin: 0;
+}
+
 .empty_state {
     padding: 80px 0 96px;
     text-align: center;
