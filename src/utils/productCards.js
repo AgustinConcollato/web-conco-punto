@@ -60,27 +60,61 @@ export function productCards(product, query) {
     return queryMatchCards(product, query) ?? defaultCards(product);
 }
 
-// ¿El producto satisface TODAS las palabras de la búsqueda? Busca cada palabra en
-// nombre + sku + atributos del base y de las variantes. Sirve para distinguir un
-// resultado real de una sugerencia: "gorro rojo" en un gorro sin rojo -> false.
-// Palabras de 1 char: match de token exacto (talles "M"/"S"); ≥2 chars: substring.
-// Sin query -> true.
-export function productMatchesQuery(product, query) {
-    const words = (query ?? '').toLowerCase().split(/\s+/).filter(Boolean);
-    if (!words.length) return true;
+// Cards (base/variantes) CON STOCK que satisfacen TODAS las palabras de la búsqueda.
+// Cada card matchea si el texto del producto (nombre + atributos de producto) más los atributos
+// propios de esa card contienen todas las palabras. Clave para no mostrar, p. ej., la variante
+// Azul cuando se busca "gorro negro" y el negro está sin stock.
+//
+// Distinción importante: los atributos del base que corresponden a un EJE de variante (Color,
+// Talle: los category_attribute que usan las variantes) son ruido (el "color del base") y se
+// ignoran para matchear. El resto de atributos del base (Marca, Material, Tipo) sí cuentan a
+// nivel producto, así una búsqueda por marca sigue trayendo los productos con variantes.
+export function searchCards(product, query) {
+    // Normaliza: minúsculas + sin acentos, para que "camion" matchee "camión".
+    const norm = (s) => (s ?? '').toString().normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    const words = norm(query).split(/\s+/).filter(Boolean);
+    if (!words.length) return defaultCards(product);
 
-    const parts = [
-        product.name,
-        product.sku,
-        ...(product.attribute_values ?? []).map(a => a.value),
-        ...(product.variants ?? []).flatMap(v => [
-            v.sku,
-            ...(v.attribute_values ?? []).map(a => a.value),
-        ]),
-    ].filter(Boolean);
+    const allVariants = product.variants ?? [];
+    const inStockVariants = allVariants.filter(v => v.is_active !== false && v.stock > 0);
 
-    const hay = parts.join(' ').toLowerCase();
-    const tokens = hay.split(/\s+/);
+    // Ejes de variante = category_attribute usados por las variantes (ej. Color).
+    const axisIds = new Set();
+    for (const v of allVariants) {
+        for (const a of (v.attribute_values ?? [])) {
+            if (a.category_attribute_id != null) axisIds.add(a.category_attribute_id);
+        }
+    }
 
-    return words.every(w => (w.length >= 2 ? hay.includes(w) : tokens.includes(w)));
+    // Atributos del base que NO son eje de variante -> matchean a nivel producto.
+    const baseProductValues = (product.attribute_values ?? [])
+        .filter(a => !axisIds.has(a.category_attribute_id))
+        .map(a => a.value ?? '')
+        .join(' ');
+
+    const productText = norm(`${product.name ?? ''} ${baseProductValues} ${product.sku ?? ''}`);
+
+    const hasAll = (hay) => {
+        const tokens = hay.split(/\s+/);
+        return words.every(w => (w.length >= 2 ? hay.includes(w) : tokens.includes(w)));
+    };
+
+    const attrsText = (o) => (o.attribute_values ?? []).map(a => a.value ?? '').join(' ');
+    const cards = [];
+
+    // Card base: visible si el base tiene stock (o el producto no tiene variantes) y el texto
+    // de producto satisface todas las palabras (sin considerar colores de variantes).
+    const showBase = product.stock > 0 || inStockVariants.length === 0;
+    if (showBase && hasAll(productText)) {
+        cards.push({ key: `p-${product.id}` });
+    }
+
+    // Cards de variantes con stock: texto de producto + atributos de la variante.
+    for (const v of inStockVariants) {
+        if (hasAll(norm(`${productText} ${attrsText(v)} ${v.sku ?? ''}`))) {
+            cards.push({ key: `v-${v.id}`, variant: v });
+        }
+    }
+
+    return cards;
 }

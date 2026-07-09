@@ -3,7 +3,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { getCategories, getProducts } from '../../services/catalogService';
 import { usePriceContext } from '../../../../context/PriceContext';
 import { ProductCard } from '../../components/ProductCard/ProductCard';
-import { productCards, defaultCards, productMatchesQuery } from '../../../../utils/productCards';
+import { defaultCards, searchCards } from '../../../../utils/productCards';
 import { slugify } from '../../../../utils/slugify';
 import { absoluteUrl } from '../../../../config/api';
 import { Seo } from '../../../../components/Seo/Seo';
@@ -111,13 +111,11 @@ export function CatalogPage() {
         }, { replace: true });
     };
 
-    // Resultados reales: con búsqueda, solo los productos que satisfacen TODAS las palabras
-    // y que aportan al menos una card con stock. (El backend ya filtra con AND, pero además
-    // acá descartamos, p. ej., un "gorro rojo" cuyo único rojo está sin stock.)
+    // Resultados reales: cards CON STOCK que satisfacen todas las palabras. Un color que solo
+    // aparece como etiqueta del base o en una variante sin stock NO cuenta (p. ej. "gorro negro"
+    // no muestra el Azul de un gorro cuyo negro está agotado).
     const { cards, hasRealResults } = useMemo(() => {
-        const build = (prods) => prods.flatMap(p => productCards(p, q).map(cd => ({ p, c: cd })));
-        const source = q ? products.filter(p => productMatchesQuery(p, q)) : products;
-        const list = build(source);
+        const list = products.flatMap(p => searchCards(p, q).map(cd => ({ p, c: cd })));
         return { cards: list, hasRealResults: list.length > 0 };
     }, [products, q]);
 
