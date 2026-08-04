@@ -1,5 +1,8 @@
 import { BannerCarousel } from '../BannerCarousel/BannerCarousel';
+import { BannerProductsSection } from '../BannerProductsSection/BannerProductsSection';
 import { ProductsSection } from '../ProductsSection/ProductsSection';
+import { ProductsGridSection } from '../ProductsGridSection/ProductsGridSection';
+import { PromoTilesSection } from '../PromoTilesSection/PromoTilesSection';
 import { PromotionsSection } from '../PromotionsSection/PromotionsSection';
 import { TextBlock } from '../TextBlock/TextBlock';
 import styles from './SectionRenderer.module.css';
@@ -31,6 +34,40 @@ export function SectionRenderer({ sections, data }) {
                         keyword={settings?.source === 'keyword' ? settings?.keyword : undefined}
                     />
                 );
+            }
+
+            if (type === 'products_grid') {
+                const products = data.productsBySection[id] ?? [];
+                const limited = settings?.limit ? products.slice(0, settings.limit) : products;
+
+                return (
+                    <ProductsGridSection
+                        key={id}
+                        title={settings?.title}
+                        products={limited}
+                        viewAllHref={settings?.viewAllHref || undefined}
+                        keyword={settings?.source === 'keyword' ? settings?.keyword : undefined}
+                    />
+                );
+            }
+
+            if (type === 'banner_products') {
+                const products = data.productsBySection[id] ?? [];
+                const limited = settings?.limit ? products.slice(0, settings.limit) : products;
+
+                return (
+                    <BannerProductsSection
+                        key={id}
+                        settings={settings}
+                        title={settings?.title}
+                        products={limited}
+                        keyword={settings?.source === 'keyword' ? settings?.keyword : undefined}
+                    />
+                );
+            }
+
+            if (type === 'promo_tiles') {
+                return <PromoTilesSection key={id} tiles={settings?.tiles ?? []} />;
             }
 
             if (type === 'promotions') {

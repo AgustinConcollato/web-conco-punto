@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
-import { ProductRow } from '../ProductRow/ProductRow';
-import styles from './ProductsSection.module.css';
+import { ProductGrid } from '../ProductGrid/ProductGrid';
+import styles from './ProductsGridSection.module.css';
 
-export function ProductsSection({ title, products, viewAllHref, keyword }) {
+export function ProductsGridSection({ title, products, viewAllHref, keyword }) {
     if (!products?.length) return null;
 
     return (
@@ -13,7 +13,7 @@ export function ProductsSection({ title, products, viewAllHref, keyword }) {
                     <Link to={viewAllHref} className={styles.view_all}>Ver todo →</Link>
                 )}
             </div>
-            <ProductRow products={products} keyword={keyword} />
+            <ProductGrid products={products} keyword={keyword} />
         </section>
     );
 }

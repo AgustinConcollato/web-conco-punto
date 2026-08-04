@@ -1,0 +1,19 @@
+.row {
+    display: flex;
+    gap: 16px;
+}
+
+.card_wrap {
+    flex: 0 0 230px;
+    min-width: 0;
+}
+
+@media (max-width: 700px) {
+    .row {
+        gap: 12px;
+    }
+
+    .card_wrap {
+        flex-basis: 150px;
+    }
+}

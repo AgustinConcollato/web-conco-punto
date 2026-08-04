@@ -33,10 +33,12 @@ const fetchProductsFor = (settings, priceListId) => {
  * para que el home renderice todo junto. Solo refetchea cuando cambian
  * parámetros que afectan datos (no títulos/textos/banners).
  */
+const PRODUCT_SECTION_TYPES = ['products', 'products_grid', 'banner_products'];
+
 export function useHomeSectionsData(sections, priceListId) {
     const visible = (sections ?? []).filter(s => s.visible);
 
-    const productSections = visible.filter(s => s.type === 'products');
+    const productSections = visible.filter(s => PRODUCT_SECTION_TYPES.includes(s.type));
     const needsPromotions = visible.some(s => s.type === 'promotions');
 
     const fetchKey = JSON.stringify({

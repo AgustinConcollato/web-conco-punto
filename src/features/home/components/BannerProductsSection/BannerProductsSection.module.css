@@ -1,0 +1,47 @@
+.section {
+    display: flex;
+    flex-direction: column;
+}
+
+.hero {
+    position: relative;
+}
+
+.fade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 120px;
+    background: linear-gradient(to bottom, transparent, var(--bg));
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    pointer-events: none;
+}
+
+.products {
+    margin-top: 16px;
+}
+
+.products_overlap {
+    position: relative;
+    z-index: 2;
+    margin-top: -56px;
+}
+
+.title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-h);
+    margin: 0 0 16px;
+    letter-spacing: -0.2px;
+}
+
+@media (max-width: 700px) {
+    .fade {
+        height: 70px;
+    }
+
+    .products_overlap {
+        margin-top: -32px;
+    }
+}
