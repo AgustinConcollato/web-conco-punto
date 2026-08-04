@@ -35,55 +35,57 @@ export function BannerCarousel({ settings }) {
             onMouseLeave={() => { pausedRef.current = false; }}
             aria-label="Banners"
         >
-            <div
-                className={styles.track}
-                style={{ transform: `translateX(-${current * 100}%)` }}
-            >
-                {slides.map(slide => {
-                    const src = slide.url ?? `${IMAGE_URL}/${slide.path}`;
-                    const img = <img src={src} alt="" className={styles.img} />;
+            <div className={styles.viewport}>
+                <div
+                    className={styles.track}
+                    style={{ transform: `translateX(-${current * 100}%)` }}
+                >
+                    {slides.map(slide => {
+                        const src = slide.url ?? `${IMAGE_URL}/${slide.path}`;
+                        const img = <img src={src} alt="" className={styles.img} />;
 
-                    return slide.link ? (
-                        <a key={slide.id} href={slide.link} className={styles.slide}>
-                            {img}
-                        </a>
-                    ) : (
-                        <div key={slide.id} className={styles.slide}>
-                            {img}
+                        return slide.link ? (
+                            <a key={slide.id} href={slide.link} className={styles.slide}>
+                                {img}
+                            </a>
+                        ) : (
+                            <div key={slide.id} className={styles.slide}>
+                                {img}
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {slides.length > 1 && (
+                    <>
+                        <button
+                            className={`${styles.arrow} ${styles.arrow_left}`}
+                            onClick={() => go(current - 1)}
+                            aria-label="Banner anterior"
+                        >
+                        <i className="hgi hgi-stroke hgi-rounded hgi-arrow-left-02"></i>
+                        </button>
+                        <button
+                            className={`${styles.arrow} ${styles.arrow_right}`}
+                            onClick={() => go(current + 1)}
+                            aria-label="Banner siguiente"
+                        >
+                            <i className="hgi hgi-stroke hgi-rounded hgi-arrow-right-02"></i>
+                        </button>
+
+                        <div className={styles.dots}>
+                            {slides.map((slide, i) => (
+                                <button
+                                    key={slide.id}
+                                    className={`${styles.dot} ${i === current ? styles.dot_active : ''}`}
+                                    onClick={() => go(i)}
+                                    aria-label={`Ir al banner ${i + 1}`}
+                                />
+                            ))}
                         </div>
-                    );
-                })}
+                    </>
+                )}
             </div>
-
-            {slides.length > 1 && (
-                <>
-                    <button
-                        className={`${styles.arrow} ${styles.arrow_left}`}
-                        onClick={() => go(current - 1)}
-                        aria-label="Banner anterior"
-                    >
-                    <i className="hgi hgi-stroke hgi-rounded hgi-arrow-left-02"></i>
-                    </button>
-                    <button
-                        className={`${styles.arrow} ${styles.arrow_right}`}
-                        onClick={() => go(current + 1)}
-                        aria-label="Banner siguiente"
-                    >
-                        <i className="hgi hgi-stroke hgi-rounded hgi-arrow-right-02"></i>
-                    </button>
-
-                    <div className={styles.dots}>
-                        {slides.map((slide, i) => (
-                            <button
-                                key={slide.id}
-                                className={`${styles.dot} ${i === current ? styles.dot_active : ''}`}
-                                onClick={() => go(i)}
-                                aria-label={`Ir al banner ${i + 1}`}
-                            />
-                        ))}
-                    </div>
-                </>
-            )}
         </section>
     );
 }
