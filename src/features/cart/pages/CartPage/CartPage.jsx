@@ -7,6 +7,7 @@ import { calcEffectivePrice } from '../../../../utils/promo';
 import { productHref } from '../../../../utils/slug';
 import { Seo } from '../../../../components/Seo/Seo';
 import { useCartSync } from '../../hooks/useCartSync';
+import { DropshipNotice } from '../../components/DropshipNotice/DropshipNotice';
 import styles from './CartPage.module.css';
 
 export function CartPage() {
@@ -28,6 +29,7 @@ export function CartPage() {
     return (
         <div className={styles.page}>
             <Seo title="Carrito" noindex />
+            <DropshipNotice />
             <h1 className={styles.title}>Carrito</h1>
 
             {syncing && (
