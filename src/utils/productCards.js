@@ -109,9 +109,11 @@ export function searchCards(product, query) {
         cards.push({ key: `p-${product.id}` });
     }
 
-    // Cards de variantes con stock: texto de producto + atributos de la variante.
+    // Cards de variantes con stock: texto de producto + nombre, atributos y sku propios
+    // de la variante. El nombre propio entra para que una variante que se llama distinto
+    // al base se pueda encontrar por ese nombre; solo suma texto, nunca descarta cards.
     for (const v of inStockVariants) {
-        if (hasAll(norm(`${productText} ${attrsText(v)} ${v.sku ?? ''}`))) {
+        if (hasAll(norm(`${productText} ${v.name ?? ''} ${attrsText(v)} ${v.sku ?? ''}`))) {
             cards.push({ key: `v-${v.id}`, variant: v });
         }
     }

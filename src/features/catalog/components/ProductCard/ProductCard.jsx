@@ -11,7 +11,8 @@ import styles from './ProductCard.module.css';
 export function ProductCard({ product, variant }) {
     const { priceListId } = usePriceContext();
     const { addItem } = useCartContext();
-    const price = getPrice(product.price_lists, priceListId);
+    const variantPrice = variant?.price_lists?.length ? getPrice(variant.price_lists, priceListId) : null;
+    const price = variantPrice ?? getPrice(product.price_lists, priceListId);
 
     const promo = getActivePromo(product.promotions, priceListId);
     const promoPrice = calcPromoPrice(price, promo);
@@ -22,8 +23,9 @@ export function ProductCard({ product, variant }) {
     const thumb = images[imgIdx]?.thumbnail_path;
     const hasMultiple = images.length > 1;
 
+    const name = variant?.name ?? product.name;
     const stock = variant != null ? variant.stock : product.stock;
-    const isDropship = !!product.is_dropshipping;
+    const isDropship = (variant ? variant.is_dropshipping : null) ?? !!product.is_dropshipping;
     const available = stock > 0;
     const sku = variant ? (variant.sku ?? product.sku) : product.sku;
     const to = productHref(product, variant);
@@ -57,7 +59,7 @@ export function ProductCard({ product, variant }) {
         const addedQty = addItem({
             product_id: product.id,
             variant_id: variant?.id ?? null,
-            name: product.name,
+            name,
             sku,
             price,
             promo: promo ?? null,
@@ -80,13 +82,13 @@ export function ProductCard({ product, variant }) {
         <Link
             to={to}
             className={styles.card}
-            title={product.name}
+            title={name}
         >
             <div className={styles.img_wrap}>
                 {thumb ? (
                     <img
                         src={`${IMAGE_URL}/${thumb}`}
-                        alt={product.name}
+                        alt={name}
                         className={styles.img}
                         loading="lazy"
                     />
@@ -118,7 +120,7 @@ export function ProductCard({ product, variant }) {
                 )}
             </div>
             <div className={styles.body}>
-                <p className={styles.name}>{product.name}</p>
+                <p className={styles.name}>{name}</p>
                 {variantLabel && <p className={styles.variant_label}>{variantLabel}</p>}
                 <div className={styles.info}>
                     {sku && <p className={styles.sku}>{sku}</p>}

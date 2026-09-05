@@ -655,3 +655,9 @@
         font-size: 1.9rem;
     }
 }
+/* Precio propio de una variante en el tooltip del selector. Solo se muestra
+   cuando difiere del precio del producto base. */
+.tooltip_price {
+    color: var(--text-h);
+    font-weight: 700;
+}

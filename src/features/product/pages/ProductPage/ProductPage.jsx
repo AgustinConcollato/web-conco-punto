@@ -77,15 +77,11 @@ export function ProductPage() {
                 if (data?.error) { setError('not_found'); return; }
 
                 setProduct(data);
-                if (vid) {
-                    const match = data.variants?.find(v => String(v.id) === String(vid));
-                    setSelectedVariant(match ?? null);
-                } else {
-                    setSelectedVariant(null);
-                }
+                const match = vid ? data.variants?.find(v => String(v.id) === String(vid)) ?? null : null;
+                setSelectedVariant(match);
 
                 // Redirect canónico: /productos/123 (viejo o slug incorrecto) -> /productos/nombre-123
-                const expected = productHref(data, vid ? { id: vid } : undefined);
+                const expected = productHref(data, match ?? (vid ? { id: vid } : undefined));
                 if (location.pathname !== expected) {
                     navigate(expected, { replace: true });
                 }
@@ -141,7 +137,11 @@ export function ProductPage() {
         </div>
     );
 
-    const price = getPrice(product.price_lists, priceListId);
+    const displayName = selectedVariant?.name ?? product.name;
+    const isDropship = (selectedVariant ? selectedVariant.is_dropshipping : null) ?? !!product.is_dropshipping;
+    const basePrice = getPrice(product.price_lists, priceListId);
+    const variantPrice = selectedVariant?.price_lists?.length ? getPrice(selectedVariant.price_lists, priceListId) : null;
+    const price = variantPrice ?? basePrice;
     const promo = getActivePromo(product.promotions, priceListId);
     const promoPrice = calcPromoPrice(price, promo);
     const categories = product.categories?.map(c => {
@@ -158,7 +158,6 @@ export function ProductPage() {
 
     const displayImages = (selectedVariant?.images?.length ? selectedVariant.images : product.images) ?? [];
     const displayStock = selectedVariant !== null ? selectedVariant.stock : product.stock;
-    const isDropship = !!product.is_dropshipping;
     const displaySku = selectedVariant?.sku ?? product.sku;
 
     const inCart = cartItems.find(i =>
@@ -184,14 +183,14 @@ export function ProductPage() {
     // --- SEO ---
     const canonical = absoluteUrl(productHref(product));
     const seoDescription = (product.description || '').replace(/\s+/g, ' ').trim().slice(0, 160)
-        || `${product.name} en Conco y Punto.`;
+        || `${displayName} en Conco y Punto.`;
     const seoImages = displayImages.map(im => `${IMAGE_URL}/${im.path}`).filter(Boolean);
     const offerPrice = (promo && promoPrice !== null) ? promoPrice : price;
 
     const productLd = {
         '@context': 'https://schema.org',
         '@type': 'Product',
-        name: product.name,
+        name: displayName,
         ...(seoImages.length ? { image: seoImages } : {}),
         description: seoDescription,
         ...(displaySku ? { sku: displaySku } : {}),
@@ -215,13 +214,13 @@ export function ProductPage() {
     } else if (crumbCat) {
         breadcrumbItems.push({ '@type': 'ListItem', position: breadcrumbItems.length + 1, name: crumbCat.name, item: absoluteUrl(`/categoria/${crumbCat.slug}`) });
     }
-    breadcrumbItems.push({ '@type': 'ListItem', position: breadcrumbItems.length + 1, name: product.name, item: canonical });
+    breadcrumbItems.push({ '@type': 'ListItem', position: breadcrumbItems.length + 1, name: displayName, item: canonical });
     const breadcrumbLd = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: breadcrumbItems };
 
     return (
         <div className={styles.page}>
             <Seo
-                title={product.name}
+                title={displayName}
                 description={seoDescription}
                 canonical={canonical}
                 image={seoImages[0]}
@@ -232,12 +231,12 @@ export function ProductPage() {
 
             <div className={styles.layout}>
                 <div className={styles.gallery_col}>
-                    <ImageGallery key={selectedVariant?.id ?? 'product'} images={displayImages} alt={product.name} />
+                    <ImageGallery key={selectedVariant?.id ?? 'product'} images={displayImages} alt={displayName} />
                 </div>
 
                 <div className={styles.info_col}>
                     {categories && <div className={styles.category}>{categories}</div>}
-                    <h1 className={styles.name}>{product.name}</h1>
+                    <h1 className={styles.name}>{displayName}</h1>
                     {displaySku && <p className={styles.sku}>{displaySku}</p>}
 
                     {hasVariants && (
@@ -274,8 +273,8 @@ export function ProductPage() {
                                                         : <>{product.sku ?? 'Base'}</>
                                                     }
                                                 </span>
-                                                <span className={`${styles.tooltip_stock} ${isDropship && product.stock > 0 ? styles.available : ''}`}>
-                                                    {isDropship
+                                                <span className={`${styles.tooltip_stock} ${!!product.is_dropshipping && product.stock > 0 ? styles.available : ''}`}>
+                                                    {product.is_dropshipping
                                                         ? (product.stock > 0 ? 'Disponible' : 'Sin stock')
                                                         : `Stock: ${product.stock}`}
                                                 </span>
@@ -293,6 +292,11 @@ export function ProductPage() {
                                     const label = diffAttrName
                                         ? getAttrValue(vEffective, diffAttrName)
                                         : (v.sku ?? null);
+                                    const vIsDropship = v.is_dropshipping ?? !!product.is_dropshipping;
+                                    // Precio propio de la variante, solo si difiere del producto base:
+                                    // asi se ve en el selector que elegir esta variante cambia el precio.
+                                    const vPrice = v.price_lists?.length ? getPrice(v.price_lists, priceListId) : null;
+                                    const vPriceDiffers = vPrice !== null && vPrice !== basePrice;
                                     return (
                                         <div key={v.id} className={styles.swatch_wrap}>
                                             <button
@@ -312,11 +316,14 @@ export function ProductPage() {
                                                         : <>{v.sku ?? 'Variante'}</>
                                                     }
                                                 </span>
-                                                <span className={`${styles.tooltip_stock} ${isDropship && v.stock > 0 ? styles.available : ''}`}>
-                                                    {isDropship
+                                                <span className={`${styles.tooltip_stock} ${vIsDropship && v.stock > 0 ? styles.available : ''}`}>
+                                                    {vIsDropship
                                                         ? (v.stock > 0 ? 'Disponible' : 'Sin stock')
                                                         : `Stock: ${v.stock}`}
                                                 </span>
+                                                {vPriceDiffers && (
+                                                    <span className={styles.tooltip_price}>{formatPrice(vPrice)}</span>
+                                                )}
                                             </div>
                                         </div>
                                     );
@@ -398,7 +405,7 @@ export function ProductPage() {
                                 addItem({
                                     product_id: product.id,
                                     variant_id: selectedVariant?.id ?? null,
-                                    name: product.name,
+                                    name: displayName,
                                     sku: displaySku,
                                     price: price ?? 0,
                                     promo: promo ?? null,

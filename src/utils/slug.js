@@ -8,7 +8,7 @@ import { slugify } from './slugify';
  */
 export function productHref(product, variant) {
     if (!product?.id) return '/';
-    const base = slugify(product.name ?? '');
+    const base = slugify(variant?.name ?? product.name ?? '');
     const slugId = base ? `${base}-${product.id}` : String(product.id);
     return variant
         ? `/productos/${slugId}/variante/${variant.id}`
