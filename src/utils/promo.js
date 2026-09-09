@@ -39,10 +39,15 @@ export function calcPromoPrice(price, promo) {
     return null;
 }
 
+function formatPct(value) {
+    // discount_value puede venir como string "20.00" (pivot) -> mostrar "20"
+    return Number(value).toString();
+}
+
 export function promoLabel(promo, formatPriceFn) {
-    if (promo.discount_type === 'percentage') return `-${promo.discount_value}%`;
+    if (promo.discount_type === 'percentage') return `-${formatPct(promo.discount_value)}%`;
     if (promo.discount_type === 'fixed_amount') return `-${formatPriceFn(promo.discount_value)}`;
-    if (promo.discount_type === 'second_unit_percentage') return `2ª unidad -${promo.discount_value}%`;
+    if (promo.discount_type === 'second_unit_percentage') return `2ª unidad -${formatPct(promo.discount_value)}%`;
     return 'Promo';
 }
 
