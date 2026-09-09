@@ -2,10 +2,21 @@ import { formatDate } from './formatDate';
 
 export function getActivePromo(promotions, priceListId) {
     if (!promotions?.length) return null;
-    return promotions.find(p => {
-        if (!p.price_list_ids?.length) return true;
-        return p.price_list_ids.includes(priceListId);
-    }) ?? null;
+    const match = promotions.find(p => {
+        if (!p.price_lists?.length) return true;
+        return p.price_lists.some(pl => pl.id === priceListId);
+    });
+    if (!match) return null;
+    // El pivot lleva la condición particular de este producto en la promo
+    // (puede pisar discount_type/discount_value/max_discount_amount/min_quantity de la promo base).
+    const override = match.pivot ?? {};
+    return {
+        ...match,
+        discount_type: override.discount_type ?? match.discount_type,
+        discount_value: override.discount_value ?? match.discount_value,
+        max_discount_amount: override.max_discount_amount ?? match.max_discount_amount,
+        min_quantity: override.min_quantity ?? match.min_quantity,
+    };
 }
 
 export function calcPromoPrice(price, promo) {
